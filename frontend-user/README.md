@@ -41,6 +41,20 @@ The **User Portal** is the client-facing application where fitness enthusiasts t
 *   `src/context/`: Global state (Auth, Theme).
 *   `src/assets/`: Static images and icons.
 
+## 🧭 Application Flow
+
+```mermaid
+graph LR
+    Login[🔐 Login/Register] --> Dashboard
+    Dashboard[📊 Dashboard] --> Workout[🏋️ Workout Logger]
+    Dashboard --> Nutrition[🍎 Nutrition Logger]
+    Dashboard --> Social[💬 Social Hub]
+    
+    Workout --> ExerciseLib[📚 Exercise Library]
+    Social --> Chat[📨 Direct Chat]
+    Social --> Feed[👥 Community Feed]
+```
+
 ## 🎨 Theme
 *   **Primary**: Calm Blue / Cyan
 *   **Mode**: Light Mode (Optimized for readability during workouts).

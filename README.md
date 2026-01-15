@@ -30,18 +30,43 @@ This project utilizes the **MERN Stack** (MongoDB, Express.js, React.js, Node.js
 
 ## 🏗 System Architecture
 
-The application is built on a **Monorepo-style** structure with a separated frontend and backend approach, ensuring loosely coupled components for better scalability.
+The application follows a modern **Monorepo-style** architecture, separating concerns between three distinct React frontends and a centralized Node.js/Express backend.
 
-### High-Level Architecture
-*   **Client Layer**:
-    *   **Frontend-User**: React Application for end-users. Accesses the API to log data and view personal stats.
-    *   **Frontend-Admin**: React Application for admins. Accesses the API to manage content and view global stats.
-*   **Service Layer (Backend)**:
-    *   **Express Server**: Handles all HTTP requests, business logic, authentication, and validation.
-    *   **REST API**: Exposes endpoints for data retrieval and manipulation.
-*   **Data Layer**:
-    *   **MongoDB**: NoSQL database for flexible data storage (Users, Workouts, Exercises, etc.).
-    *   **Cloudinary/Local Storage**: For storing image assets (Profile pictures, Gallery).
+### System Diagram
+
+```mermaid
+graph TD
+    subgraph Clients
+        UserUI[👤 User Portal<br/>(React + Vite)]
+        TrainerUI[🏋️‍♂️ Trainer Portal<br/>(React + Vite)]
+        AdminUI[🛡️ Admin Portal<br/>(React + Vite)]
+    end
+
+    subgraph Server_Layer
+        LB[API Gateway / Server<br/>(Express.js)]
+        Auth[🔐 Auth Service<br/>(JWT + Bcrypt)]
+        Logic[🧠 Business Logic<br/>(Controllers)]
+    end
+
+    subgraph Data_Layer
+        DB[(🍃 MongoDB)]
+        Storage[📂 Local Storage<br/>(Images/Uploads)]
+    end
+
+    UserUI -- HTTP/JSON --> LB
+    TrainerUI -- HTTP/JSON --> LB
+    AdminUI -- HTTP/JSON --> LB
+
+    LB --> Auth
+    LB --> Logic
+    Logic --> DB
+    Logic --> Storage
+```
+
+### High-Level Components
+*   **Client Layer**: Three separate Single Page Applications (SPAs) tailored for specific roles.
+*   **Service Layer**: A RESTful Express server handling routing, validation, and authorization.
+*   **Data Layer**: MongoDB for persistent data and local filesystem for media storage.
 
 ---
 
@@ -111,27 +136,28 @@ Designed for content curation and user oversight.
 
 ## 📂 Directory Structure
 
-A high-level view of the project:
+A high-level view of the project workspace:
 
 ```bash
-New Fitness Tracker/
-├── backend/                  # The API Server
-│   ├── config/               # DB Connection logic
-│   ├── controllers/          # Business logic for requests
-│   ├── models/               # Mongoose Schemas (User, Workout, etc.)
-│   ├── routes/               # API Endpoint Definitions
+Fitness Tracker Management System/
+├── backend/                  # 🟢 Node.js API Server
+│   ├── config/               # DB & Env Configurations
+│   ├── controllers/          # Route Logic (Auth, Tracker, etc.)
+│   ├── models/               # Mongoose Schemas
+│   ├── routes/               # Express Routes
 │   └── server.js             # Entry Point
-├── frontend-user/            # User React App
+│
+├── frontend-user/            # 👤 Client React App
 │   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   ├── context/          # React Context (Auth State)
-│   │   ├── pages/            # View/Screen Components
-│   │   └── App.jsx           # Main Router
-└── frontend-admin/           # Admin React App
-    ├── src/
-    │   ├── components/
-    │   ├── pages/
-    │   └── App.jsx
+│   │   ├── components/       # Reusable UI Components
+│   │   ├── pages/            # Application Screens
+│   │   └── context/          # State Management
+│
+├── frontend-trainer/         # 🏋️‍♂️ Trainer React App
+│   ├── src/                  # Trainer-specific Views & Logic
+│
+└── frontend-admin/           # 🛡️ Admin React App
+    ├── src/                  # Admin-specific Data Management
 ```
 
 ---
@@ -154,14 +180,13 @@ New Fitness Tracker/
 3.  **Environment Variables**: Create a `.env` file in `backend/`:
     ```env
     PORT=5000
-    MONGO_URI=mongodb://localhost:27017/fitness_tracker
-    JWT_SECRET=your_super_secret_key_123
+    MONGO_URI=MongoDB_URL
+    JWT_SECRET=JWT_SECRET
     ```
 4.  Start the server:
     ```bash
-    npm run dev
+    nodemon ./server.js
     ```
-    *Server should run on http://localhost:5000*
 
 ### Step 2: Frontend-User Setup
 1.  Open a new terminal.
@@ -177,7 +202,6 @@ New Fitness Tracker/
     ```bash
     npm run dev
     ```
-    *App should open at http://localhost:5173* (or similar)
 
 ### Step 3: Frontend-Admin Setup
 1.  Open a new terminal.
@@ -193,7 +217,6 @@ New Fitness Tracker/
     ```bash
     npm run dev
     ```
-    *App should open at http://localhost:5174* (check terminal for exact port)
 
 ---
 

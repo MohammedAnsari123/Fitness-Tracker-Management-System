@@ -72,6 +72,55 @@ JWT_SECRET=super_secure_random_string_here
 
 ---
 
+## 🗄️ Database Schema
+
+The following Entity-Relationship diagram illustrates the core data models and their relationships:
+
+```mermaid
+classDiagram
+    class User {
+        +ObjectId _id
+        +String name
+        +String email
+        +String role
+        +ObjectId trainer
+        +List~ObjectId~ friends
+    }
+    class Trainer {
+        +ObjectId _id
+        +String name
+        +String specialization
+        +List~ObjectId~ clients
+        +List~ObjectId~ programs
+    }
+    class Workout {
+        +ObjectId _id
+        +ObjectId user
+        +Date date
+        +List exercises
+    }
+    class Program {
+        +ObjectId _id
+        +ObjectId trainer
+        +ObjectId client
+        +List weeks
+    }
+    class Diet {
+        +ObjectId _id
+        +ObjectId user
+        +Date date
+        +List meals
+    }
+
+    User "1" --> "0..*" Workout : has
+    User "1" --> "0..*" Diet : has
+    Trainer "1" --> "0..*" User : manages
+    Trainer "1" --> "0..*" Program : creates
+    Program "1" --> "1" User : assigned_to
+```
+
+---
+
 ## 📡 API Reference
 
 ### 🔐 Authentication (`/api/auth`)

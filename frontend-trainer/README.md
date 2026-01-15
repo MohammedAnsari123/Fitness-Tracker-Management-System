@@ -36,6 +36,17 @@ The **Trainer Portal** is a specialized dashboard for fitness professionals to m
 *   `src/components/`: Reusable admin-style components.
 *   `src/context/`: Auth context separated for Trainer role.
 
+## 🧭 Application Flow
+
+```mermaid
+graph LR
+    Login[🔐 Login] --> Clients[👥 Client List]
+    Clients --> ClientProfile[👤 Client Profile]
+    Clients --> Programs[📝 Program Builder]
+    ClientProfile --> Chat[💬 Client Chat]
+    Programs --> Assign[📤 Assign Plan]
+```
+
 ## 🎨 Theme
 *   **Primary**: Sharp Cyan / Dark Slate
 *   **Mode**: Dark Mode (Professional, high-contrast dashboard aesthetic).
