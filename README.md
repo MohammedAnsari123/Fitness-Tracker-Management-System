@@ -37,20 +37,20 @@ The application follows a modern **Monorepo-style** architecture, separating con
 ```mermaid
 graph TD
     subgraph Clients
-        UserUI[👤 User Portal<br/>(React + Vite)]
-        TrainerUI[🏋️‍♂️ Trainer Portal<br/>(React + Vite)]
-        AdminUI[🛡️ Admin Portal<br/>(React + Vite)]
+        UserUI["👤 User Portal<br/>(React + Vite)"]
+        TrainerUI["🏋️‍♂️ Trainer Portal<br/>(React + Vite)"]
+        AdminUI["🛡️ Admin Portal<br/>(React + Vite)"]
     end
 
     subgraph Server_Layer
-        LB[API Gateway / Server<br/>(Express.js)]
-        Auth[🔐 Auth Service<br/>(JWT + Bcrypt)]
-        Logic[🧠 Business Logic<br/>(Controllers)]
+        LB["API Gateway / Server<br/>(Express.js)"]
+        Auth["🔐 Auth Service<br/>(JWT + Bcrypt)"]
+        Logic["🧠 Business Logic<br/>(Controllers)"]
     end
 
     subgraph Data_Layer
-        DB[(🍃 MongoDB)]
-        Storage[📂 Local Storage<br/>(Images/Uploads)]
+        DB[("🍃 MongoDB")]
+        Storage["📂 Local Storage<br/>(Images/Uploads)"]
     end
 
     UserUI -- HTTP/JSON --> LB
@@ -240,4 +240,4 @@ The backend exposes a RESTful API. For full details, see the `backend/README.md`
 5.  Open a Pull Request.
 
 ---
-**Developed by [Your Name/Team]**
+**Developed by Mohammed Ansari**

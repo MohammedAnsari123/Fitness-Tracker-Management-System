@@ -45,14 +45,14 @@ The **User Portal** is the client-facing application where fitness enthusiasts t
 
 ```mermaid
 graph LR
-    Login[🔐 Login/Register] --> Dashboard
-    Dashboard[📊 Dashboard] --> Workout[🏋️ Workout Logger]
-    Dashboard --> Nutrition[🍎 Nutrition Logger]
-    Dashboard --> Social[💬 Social Hub]
+    Login["🔐 Login/Register"] --> Dashboard
+    Dashboard["📊 Dashboard"] --> Workout["🏋️ Workout Logger"]
+    Dashboard --> Nutrition["🍎 Nutrition Logger"]
+    Dashboard --> Social["💬 Social Hub"]
     
-    Workout --> ExerciseLib[📚 Exercise Library]
-    Social --> Chat[📨 Direct Chat]
-    Social --> Feed[👥 Community Feed]
+    Workout --> ExerciseLib["📚 Exercise Library"]
+    Social --> Chat["📨 Direct Chat"]
+    Social --> Feed["👥 Community Feed"]
 ```
 
 ## 🎨 Theme

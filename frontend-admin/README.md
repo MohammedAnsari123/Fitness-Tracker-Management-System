@@ -39,13 +39,13 @@ The **Admin Portal** is the central control hub for the Fitness Tracker Manageme
 
 ```mermaid
 graph LR
-    Login[🔐 Login] --> Dashboard[📊 System Dashboard]
-    Dashboard --> Users[👥 User Mgmt]
-    Dashboard --> Content[🗃️ Content CMS]
-    Dashboard --> Challenges[🏆 Challenge Mgmt]
+    Login["🔐 Login"] --> Dashboard["📊 System Dashboard"]
+    Dashboard --> Users["👥 User Mgmt"]
+    Dashboard --> Content["🗃️ Content CMS"]
+    Dashboard --> Challenges["🏆 Challenge Mgmt"]
     
-    Content --> ExerciseDB[🏋️ Exercise DB]
-    Content --> FoodDB[🍎 Food DB]
+    Content --> ExerciseDB["🏋️ Exercise DB"]
+    Content --> FoodDB["🍎 Food DB"]
 ```
 
 ## 🎨 Theme

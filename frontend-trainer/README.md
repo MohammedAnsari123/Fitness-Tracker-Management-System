@@ -40,11 +40,11 @@ The **Trainer Portal** is a specialized dashboard for fitness professionals to m
 
 ```mermaid
 graph LR
-    Login[🔐 Login] --> Clients[👥 Client List]
-    Clients --> ClientProfile[👤 Client Profile]
-    Clients --> Programs[📝 Program Builder]
-    ClientProfile --> Chat[💬 Client Chat]
-    Programs --> Assign[📤 Assign Plan]
+    Login["🔐 Login"] --> Clients["👥 Client List"]
+    Clients --> ClientProfile["👤 Client Profile"]
+    Clients --> Programs["📝 Program Builder"]
+    ClientProfile --> Chat["💬 Client Chat"]
+    Programs --> Assign["📤 Assign Plan"]
 ```
 
 ## 🎨 Theme
