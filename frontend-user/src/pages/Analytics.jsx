@@ -24,9 +24,9 @@ const Analytics = () => {
             const headers = { Authorization: `Bearer ${token}` };
             try {
                 const [analyticsRes, prsRes, customRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/tracker/analytics', { headers }),
-                    axios.get('http://localhost:5000/api/tracker/prs', { headers }),
-                    axios.get('http://localhost:5000/api/tracker/exercises/custom', { headers })
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/analytics', { headers }),
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/prs', { headers }),
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/exercises/custom', { headers })
                 ]);
 
                 const formattedVolume = analyticsRes.data.volumeData.map(d => ({
@@ -50,7 +50,7 @@ const Analytics = () => {
         const fetchHistory = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await axios.get(`http://localhost:5000/api/tracker/exercise-history?exercise=${selectedExercise}`, {
+                const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/exercise-history?exercise=${selectedExercise}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const formattedHistory = res.data.map(h => ({
@@ -79,7 +79,7 @@ const Analytics = () => {
         if (customExercise && !exercisesList.includes(customExercise)) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.post('http://localhost:5000/api/tracker/exercises/custom',
+                await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/exercises/custom',
                     { exercise: customExercise },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -97,7 +97,7 @@ const Analytics = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/api/tracker/workouts', {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/workouts', {
                 date: newLog.date,
                 exercises: [{
                     name: selectedExercise,
@@ -107,12 +107,12 @@ const Analytics = () => {
                 }]
             }, { headers: { Authorization: `Bearer ${token}` } });
 
-            await axios.post('http://localhost:5000/api/tracker/prs', {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/prs', {
                 exercise: selectedExercise,
                 weight: parseFloat(newLog.weight)
             }, { headers: { Authorization: `Bearer ${token}` } });
 
-            const res = await axios.get(`http://localhost:5000/api/tracker/exercise-history?exercise=${selectedExercise}`, {
+            const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/exercise-history?exercise=${selectedExercise}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const formattedHistory = res.data.map(h => ({
@@ -123,7 +123,7 @@ const Analytics = () => {
             setNewLog({ ...newLog, weight: '' });
             alert('PR Logged!');
 
-            const prsRes = await axios.get('http://localhost:5000/api/tracker/prs', { headers: { Authorization: `Bearer ${token}` } });
+            const prsRes = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/prs', { headers: { Authorization: `Bearer ${token}` } });
             setPrs(prsRes.data);
 
         } catch (error) {

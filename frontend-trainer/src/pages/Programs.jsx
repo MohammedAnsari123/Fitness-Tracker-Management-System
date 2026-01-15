@@ -29,7 +29,7 @@ const Programs = () => {
 
     const fetchClients = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/trainer/clients', config);
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', config);
             setClients(res.data);
             setLoading(false);
         } catch (err) {
@@ -50,7 +50,7 @@ const Programs = () => {
                 endDate: new Date(Date.now() + weeksDuration * 7 * 24 * 60 * 60 * 1000)
             };
 
-            await axios.post('http://localhost:5000/api/trainer/programs', payload, config);
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/programs', payload, config);
             alert('Program Created Successfully!');
             setShowCreateModal(false);
             setProgramName('');

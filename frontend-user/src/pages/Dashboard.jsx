@@ -16,7 +16,7 @@ const Dashboard = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('http://localhost:5000/api/tracker/dashboard', config);
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/dashboard', config);
                 setStats(res.data);
             } catch (err) {
                 console.error(err);

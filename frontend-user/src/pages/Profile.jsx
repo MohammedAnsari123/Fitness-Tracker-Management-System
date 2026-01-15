@@ -38,7 +38,7 @@ const Profile = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            const res = await axios.put('http://localhost:5000/api/users/profile',
+            const res = await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/profile',
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

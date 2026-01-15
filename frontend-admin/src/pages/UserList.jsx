@@ -9,7 +9,7 @@ const UserList = () => {
     const fetchUsers = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/users', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(res.data);
@@ -26,7 +26,7 @@ const UserList = () => {
         if (window.confirm('Are you sure you want to delete this user and ALL their data?')) {
             const token = localStorage.getItem('adminToken');
             try {
-                await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+                await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchUsers();

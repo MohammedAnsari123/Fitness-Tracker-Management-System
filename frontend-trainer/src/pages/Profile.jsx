@@ -21,7 +21,7 @@ const Profile = () => {
     const fetchProfile = async () => {
         const token = localStorage.getItem('trainerToken');
         try {
-            const res = await axios.get('http://localhost:5000/api/trainer/profile', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/profile', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data) {
@@ -47,7 +47,7 @@ const Profile = () => {
         e.preventDefault();
         const token = localStorage.getItem('trainerToken');
         try {
-            await axios.put('http://localhost:5000/api/trainer/profile', profile, {
+            await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/profile', profile, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMsg('Profile updated successfully!');

@@ -1,28 +1,90 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
 import { Send, Search, Phone, Video, MoreVertical, MessageSquare } from 'lucide-react';
+import { io } from 'socket.io-client';
+import AuthContext from '../context/AuthContext';
+
+const ENDPOINT = "https://fitness-tracker-management-system-xi0y.onrender.com"; // Backend URL
 
 const Chat = () => {
+    const { user } = useContext(AuthContext);
     const [conversations, setConversations] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const scrollRef = useRef();
+    const socket = useRef(null);
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+
+    // Initialize Socket (remains same)
+    useEffect(() => {
+        if (user) {
+            socket.current = io(ENDPOINT);
+            socket.current.emit("join_room", user._id);
+        }
+        return () => {
+            socket.current?.disconnect();
+        };
+    }, [user]);
+
+    // Listen for Messages
+    useEffect(() => {
+        if (!socket.current) return;
+
+        const messageHandler = (newMessageReceived) => {
+            // Check if the message belongs to the currently active chat
+            if (activeChat && (
+                newMessageReceived.senderId === activeChat._id ||
+                newMessageReceived.receiverId === activeChat._id
+            )) {
+                setMessages((prev) => [...prev, newMessageReceived]);
+            }
+        };
+
+        socket.current.on("receive_message", messageHandler);
+
+        return () => {
+            socket.current.off("receive_message", messageHandler);
+        };
+    }, [activeChat]);
 
     useEffect(() => {
         fetchConversations();
     }, []);
 
+    // Search Users
     useEffect(() => {
-        let interval;
+        const search = async () => {
+            if (!searchQuery.trim()) {
+                setSearchResults([]);
+                return;
+            }
+            try {
+                const token = localStorage.getItem('token');
+                const res = await axios.get(`${ENDPOINT}/api/chat/search?query=${searchQuery}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setSearchResults(res.data);
+            } catch (error) {
+                console.error("Error searching users", error);
+            }
+        };
+
+        const debounce = setTimeout(() => {
+            search();
+        }, 500);
+
+        return () => clearTimeout(debounce);
+    }, [searchQuery]);
+
+    // Initial fetch when opening a chat
+    useEffect(() => {
         if (activeChat) {
             fetchMessages(activeChat._id);
-            interval = setInterval(() => {
-                fetchMessages(activeChat._id);
-            }, 3000);
         }
-        return () => clearInterval(interval);
     }, [activeChat]);
 
     useEffect(() => {
@@ -32,15 +94,15 @@ const Chat = () => {
     const fetchConversations = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/chat/conversations', {
+            const res = await axios.get(`${ENDPOINT}/api/chat/conversations`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setConversations(res.data);
 
             // Auto-select if only one conversation (e.g., Trainer)
-            if (res.data.length === 1) {
-                setActiveChat(res.data[0]);
-            }
+            // if (res.data.length === 1) {
+            //     setActiveChat(res.data[0]);
+            // }
 
             setLoading(false);
         } catch (error) {
@@ -52,7 +114,7 @@ const Chat = () => {
     const fetchMessages = async (otherId) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/chat/${otherId}`, {
+            const res = await axios.get(`${ENDPOINT}/api/chat/${otherId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(res.data);
@@ -65,22 +127,44 @@ const Chat = () => {
         e.preventDefault();
         if (!newMessage.trim() || !activeChat) return;
 
+        // Optimistic Update
+        const tempMsg = {
+            _id: Date.now().toString(),
+            senderId: user._id,
+            senderModel: 'User',
+            receiverId: activeChat._id,
+            receiverModel: 'Trainer',
+            message: newMessage,
+            createdAt: new Date().toISOString()
+        };
+
+        setMessages((prev) => [...prev, tempMsg]);
+        setNewMessage('');
+
         try {
             const token = localStorage.getItem('token');
             // User chats with Trainer
-            await axios.post('http://localhost:5000/api/chat/send', {
+            await axios.post(`${ENDPOINT}/api/chat/send`, {
                 receiverId: activeChat._id,
                 receiverModel: 'Trainer',
-                message: newMessage
+                message: tempMsg.message
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setNewMessage('');
-            fetchMessages(activeChat._id);
+            // No need to fetchMessages, we already appended.
         } catch (error) {
             console.error("Error sending message", error);
+            // Rollback on error
+            setMessages((prev) => prev.filter(m => m._id !== tempMsg._id));
+            alert("Failed to send message");
         }
+    };
+
+    const handleSelectChat = (chat) => {
+        setActiveChat(chat);
+        setSearchQuery(''); // Clear search on select
+        setSearchResults([]);
     };
 
     return (
@@ -94,6 +178,8 @@ const Chat = () => {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search conversations..."
                                 className="bg-slate-100 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 transition-shadow"
                             />
@@ -101,32 +187,60 @@ const Chat = () => {
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-2 space-y-1">
-                        {loading ? (
-                            <div className="text-slate-500 text-center py-4">Loading chats...</div>
-                        ) : conversations.length === 0 ? (
-                            <div className="text-slate-500 text-center py-8 px-4">
-                                <p className="mb-2">No conversations yet.</p>
-                                <p className="text-xs">Once you are assigned a trainer, they will appear here.</p>
-                            </div>
+                        {searchQuery ? (
+                            <>
+                                <div className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Search Results</div>
+                                {searchResults.length === 0 ? (
+                                    <div className="text-slate-500 text-center py-4">No results found.</div>
+                                ) : (
+                                    searchResults.map(chat => (
+                                        <div
+                                            key={chat._id}
+                                            onClick={() => handleSelectChat(chat)}
+                                            className="flex items-center space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors"
+                                        >
+                                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
+                                                {chat.name[0]}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold text-slate-700 truncate">{chat.name}</h4>
+                                                <p className="text-xs text-slate-500 truncate">{chat.role} • {chat.email}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </>
                         ) : (
-                            conversations.map(chat => (
-                                <div
-                                    key={chat._id}
-                                    onClick={() => setActiveChat(chat)}
-                                    className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all
-                                        ${activeChat?._id === chat._id ? 'bg-primary-50 border border-primary-100' : 'hover:bg-white hover:shadow-sm'}`}
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
-                                        {chat.name[0]}
+                            <>
+                                <div className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Conversations</div>
+                                {loading ? (
+                                    <div className="text-slate-500 text-center py-4">Loading chats...</div>
+                                ) : conversations.length === 0 ? (
+                                    <div className="text-slate-500 text-center py-8 px-4">
+                                        <p className="mb-2">No conversations yet.</p>
+                                        <p className="text-xs">Once you are assigned a trainer, they will appear here.</p>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className={`text-sm font-semibold truncate ${activeChat?._id === chat._id ? 'text-primary-700' : 'text-slate-700'}`}>
-                                            {chat.name}
-                                        </h4>
-                                        <p className="text-xs text-slate-500 truncate">{chat.specialization || 'Trainer'}</p>
-                                    </div>
-                                </div>
-                            ))
+                                ) : (
+                                    conversations.map(chat => (
+                                        <div
+                                            key={chat._id}
+                                            onClick={() => setActiveChat(chat)}
+                                            className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all
+                                                ${activeChat?._id === chat._id ? 'bg-primary-50 border border-primary-100' : 'hover:bg-white hover:shadow-sm'}`}
+                                        >
+                                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
+                                                {chat.name[0]}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className={`text-sm font-semibold truncate ${activeChat?._id === chat._id ? 'text-primary-700' : 'text-slate-700'}`}>
+                                                    {chat.name}
+                                                </h4>
+                                                <p className="text-xs text-slate-500 truncate">{chat.specialization || 'Trainer'}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </>
                         )}
                     </div>
                 </div>

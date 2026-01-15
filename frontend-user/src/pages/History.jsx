@@ -9,7 +9,7 @@ const History = () => {
     const fetchHistory = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await axios.get('http://localhost:5000/api/tracker/history', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/history', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setHistory(res.data);
@@ -26,7 +26,7 @@ const History = () => {
         if (!window.confirm('Delete this item?')) return;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:5000/api/tracker/history/${type}/${id}`, {
+            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/history/${type}/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchHistory();
@@ -39,7 +39,7 @@ const History = () => {
         if (!window.confirm('Are you sure you want to clear ALL history? This cannot be undone.')) return;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete('http://localhost:5000/api/tracker/history', {
+            await axios.delete('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/history', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchHistory();

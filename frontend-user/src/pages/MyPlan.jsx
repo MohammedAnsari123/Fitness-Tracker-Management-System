@@ -10,7 +10,7 @@ const MyPlan = () => {
         const fetchPlans = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await axios.get('http://localhost:5000/api/users/plans', {
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/plans', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPlans(res.data);

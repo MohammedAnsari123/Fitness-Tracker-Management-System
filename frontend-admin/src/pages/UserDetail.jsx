@@ -10,7 +10,7 @@ const UserDetail = () => {
     const fetchData = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get(`http://localhost:5000/api/admin/users/${id}`, {
+            const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setData(res.data);
@@ -28,7 +28,7 @@ const UserDetail = () => {
 
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.delete(`http://localhost:5000/api/admin/plans/${planId}`, {
+            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/plans/${planId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
@@ -203,7 +203,7 @@ const PlanForm = ({ userId, onSuccess }) => {
         const fetchTemplates = async () => {
             const token = localStorage.getItem('adminToken');
             try {
-                const res = await axios.get('http://localhost:5000/api/admin/content/templates', {
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/templates', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setTemplates(res.data);
@@ -229,7 +229,7 @@ const PlanForm = ({ userId, onSuccess }) => {
         e.preventDefault();
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.post(`http://localhost:5000/api/admin/users/${userId}/plan`,
+            await axios.post(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${userId}/plan`,
                 { type, title, content },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

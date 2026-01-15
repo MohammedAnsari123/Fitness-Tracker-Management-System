@@ -7,6 +7,49 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 connectDB();
 
 const app = express();
+const nav = require('http');
+const server = nav.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+app.set('io', io);
+
+io.on("connection", (socket) => {
+    socket.on("setup", (userData) => {
+        socket.join(userData._id);
+        socket.emit("connected");
+    });
+
+    socket.on("join chat", (room) => {
+        socket.join(room);
+    });
+
+    socket.on("new message", (newMessageRecieved) => {
+        var chat = newMessageRecieved.chat;
+
+        if (!chat.users) return console.log("chat.users not defined");
+
+        chat.users.forEach((user) => {
+            if (user._id == newMessageRecieved.sender._id) return;
+
+            socket.in(user._id).emit("message received", newMessageRecieved);
+        });
+    });
+
+    // Simpler approach for this project structure:
+    // Join a room based on USER ID.
+    // When sending a message to User X, emit to room "User X ID".
+    socket.on('join_room', (userId) => {
+        socket.join(userId);
+        console.log(`User/Trainer ${userId} joined room: ${userId}`);
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -33,6 +76,6 @@ app.get('/', (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

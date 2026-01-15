@@ -17,7 +17,7 @@ const FoodDatabase = () => {
     const fetchFoods = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/content/foods', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/foods', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFoods(res.data);
@@ -38,7 +38,7 @@ const FoodDatabase = () => {
         e.preventDefault();
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.post('http://localhost:5000/api/admin/content/foods', formData, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/foods', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowForm(false);
@@ -53,7 +53,7 @@ const FoodDatabase = () => {
         if (!window.confirm('Delete this food?')) return;
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.delete(`http://localhost:5000/api/admin/content/foods/${id}`, {
+            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/foods/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchFoods();

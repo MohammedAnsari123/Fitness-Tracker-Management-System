@@ -12,8 +12,8 @@ const Challenges = () => {
         const headers = { Authorization: `Bearer ${token}` };
         try {
             const [allRes, myRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/challenges', { headers }),
-                axios.get('http://localhost:5000/api/challenges/my', { headers })
+                axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges', { headers }),
+                axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges/my', { headers })
             ]);
             setAvailable(allRes.data);
             setMyChallenges(myRes.data);
@@ -29,7 +29,7 @@ const Challenges = () => {
     const handleJoin = async (id) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/api/challenges/join', { challengeId: id }, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges/join', { challengeId: id }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
@@ -42,7 +42,7 @@ const Challenges = () => {
     const handleProgress = async (id, currentProgress) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:5000/api/challenges/${id}/progress`,
+            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges/${id}/progress`,
                 { progress: currentProgress + 1 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

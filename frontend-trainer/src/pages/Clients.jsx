@@ -19,7 +19,7 @@ const Clients = () => {
 
     const fetchClients = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/trainer/clients', config);
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', config);
             setClients(res.data);
             setLoading(false);
         } catch (err) {
@@ -37,7 +37,7 @@ const Clients = () => {
         setError('');
         setSuccess('');
         try {
-            const res = await axios.post('http://localhost:5000/api/trainer/clients', { email: newClientEmail }, config);
+            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', { email: newClientEmail }, config);
             setSuccess(res.data.message);
             setNewClientEmail('');
             setShowAddModal(false);
@@ -50,7 +50,7 @@ const Clients = () => {
     const handleRemoveClient = async (clientId) => {
         if (!window.confirm('Are you sure you want to remove this client?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/trainer/clients/${clientId}`, config);
+            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients/${clientId}`, config);
             setClients(clients.filter(c => c._id !== clientId));
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to remove client');

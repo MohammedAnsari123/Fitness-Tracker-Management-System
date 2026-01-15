@@ -14,7 +14,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/admin/register', { name, email, password });
+            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/auth/admin/register', { name, email, password });
             if (res.data) {
                 await login(email, password);
                 navigate('/');
