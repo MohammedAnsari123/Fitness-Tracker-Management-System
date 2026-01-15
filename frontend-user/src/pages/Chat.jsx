@@ -4,7 +4,7 @@ import { Send, Search, Phone, Video, MoreVertical, MessageSquare } from 'lucide-
 import { io } from 'socket.io-client';
 import AuthContext from '../context/AuthContext';
 
-const ENDPOINT = "https://fitness-tracker-management-system-xi0y.onrender.com"; // Backend URL
+const ENDPOINT = "https://fitness-tracker-management-system-xi0y.onrender.com"; // Local Backend for testing
 
 const Chat = () => {
     const { user } = useContext(AuthContext);
