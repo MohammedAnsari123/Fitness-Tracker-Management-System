@@ -10,7 +10,10 @@ const {
     updateProfile,
     createExercise,
     createFood,
-    createPlanTemplate
+    createPlanTemplate,
+    getProgram,
+    updateProgram,
+    getClientProgress
 } = require('../controllers/trainerController');
 const { getExercises, getFoods, getPlanTemplates } = require('../controllers/adminContentController');
 const { protect, trainerOnly } = require('../middleware/authMiddleware');
@@ -20,7 +23,10 @@ router.post('/clients', protect, trainerOnly, addClient);
 router.delete('/clients/:id', protect, trainerOnly, removeClient);
 
 router.post('/programs', protect, trainerOnly, createProgram);
+router.get('/clients/:clientId/progress', protect, trainerOnly, getClientProgress);
 router.get('/programs/:clientId', protect, trainerOnly, getClientPrograms);
+router.get('/program/:id', protect, trainerOnly, getProgram);
+router.put('/program/:id', protect, trainerOnly, updateProgram);
 
 router.get('/exercises', protect, trainerOnly, getExercises);
 router.post('/exercises', protect, trainerOnly, createExercise);

@@ -70,6 +70,14 @@ const createProgram = async (req, res) => {
             endDate
         });
 
+        // Create Notification
+        const Notification = require('../models/Notification');
+        await Notification.create({
+            user: clientId,
+            type: 'success',
+            message: `New workout program "${name}" assigned by your trainer.`
+        });
+
         res.status(201).json(program);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -150,17 +158,86 @@ const createPlanTemplate = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-};
+    const getClientProgress = async (req, res) => {
+        try {
+            const clientId = req.params.clientId;
+            const client = await User.findById(clientId);
 
-module.exports = {
-    getClients,
-    addClient,
-    removeClient,
-    createProgram,
-    getClientPrograms,
-    getProfile,
-    updateProfile,
-    createExercise,
-    createFood,
-    createPlanTemplate
-};
+            // Verify authorization
+            if (!client || client.trainer.toString() !== req.trainer._id.toString()) {
+                return res.status(401).json({ message: 'Not authorized to view this client' });
+            }
+
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            // Fetch Stats
+            const [workouts, weightLogs] = await Promise.all([
+                require('../models/Workout').find({ user: clientId }).sort({ date: -1 }).limit(20),
+                require('../models/WeightLog').find({ user: clientId }).sort({ date: 1 })
+            ]);
+
+            // Calculate Streak (Simple version)
+            let streak = 0;
+            // Logic could be reused from gamification utils if exported, but simple count is fine for now
+
+            res.json({
+                clientName: client.name,
+                workouts,
+                weightLogs
+            });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    };
+
+    module.exports = {
+        getClients,
+        addClient,
+        removeClient,
+        createProgram,
+        getClientPrograms,
+        getClientProgress, // New export
+        getProfile,
+        updateProfile,
+        createExercise,
+        createFood,
+        createPlanTemplate,
+        getProgram,
+        updateProgram
+    };
+
+    const getProgram = async (req, res) => {
+        try {
+            const program = await Program.findById(req.params.id);
+            if (!program) return res.status(404).json({ message: 'Program not found' });
+
+            if (program.trainer.toString() !== req.trainer._id.toString()) {
+                return res.status(401).json({ message: 'Not authorized' });
+            }
+            res.json(program);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    };
+
+    const updateProgram = async (req, res) => {
+        try {
+            const program = await Program.findById(req.params.id);
+            if (!program) return res.status(404).json({ message: 'Program not found' });
+
+            if (program.trainer.toString() !== req.trainer._id.toString()) {
+                return res.status(401).json({ message: 'Not authorized' });
+            }
+
+            program.name = req.body.name || program.name;
+            program.description = req.body.description || program.description;
+            program.weeks = req.body.weeks || program.weeks;
+            program.isActive = req.body.isActive !== undefined ? req.body.isActive : program.isActive;
+
+            const updatedProgram = await program.save();
+            res.json(updatedProgram);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    };

@@ -20,6 +20,10 @@ import Analytics from './pages/Analytics';
 import Social from './pages/Social';
 import Tools from './pages/Tools';
 import Chat from './pages/Chat';
+import Notifications from './pages/Notifications';
+import AIGenerator from './pages/AIGenerator';
+import Wearables from './pages/Wearables';
+import Support from './pages/Support';
 
 function App() {
     return (
@@ -42,7 +46,11 @@ function App() {
                         <Route path="plans" element={<MyPlan />} />
                         <Route path="tools" element={<Tools />} />
                         <Route path="chat" element={<Chat />} />
+                        <Route path="notifications" element={<Notifications />} />
+                        <Route path="ai-coach" element={<AIGenerator />} />
+                        <Route path="wearables" element={<Wearables />} />
                         <Route path="challenges" element={<Challenges />} />
+                        <Route path="support" element={<Support />} />
                         <Route path="gallery" element={<Gallery />} />
                         <Route path="history" element={<History />} />
                         <Route path="profile" element={<Profile />} />

@@ -9,7 +9,12 @@ const workoutSchema = mongoose.Schema({
         reps: { type: Number, required: true },
         weight: { type: Number }
     }],
-    duration: { type: Number }
+    duration: { type: Number },
+    rating: {
+        type: String,
+        enum: ['Too Easy', 'Good', 'Too Hard'],
+        default: 'Good'
+    }
 }, {
     timestamps: true
 });

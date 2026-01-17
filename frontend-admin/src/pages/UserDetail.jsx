@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Activity, Utensils, Droplets, Moon, Weight, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Activity, Utensils, Droplets, Moon, Weight, Trash2, Edit } from 'lucide-react';
 
 const UserDetail = () => {
     const { id } = useParams();
     const [data, setData] = useState(null);
+    const [showSubModal, setShowSubModal] = useState(false);
+    const [subForm, setSubForm] = useState({ plan: 'Free', status: 'Active', endDate: '' });
 
     const fetchData = async () => {
         const token = localStorage.getItem('adminToken');
@@ -38,6 +43,22 @@ const UserDetail = () => {
         }
     };
 
+    const handleSubUpdate = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('adminToken');
+        try {
+            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${id}/subscription`,
+                subForm,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setShowSubModal(false);
+            fetchData();
+        } catch (error) {
+            console.error("Failed to update subscription", error);
+            alert("Failed to update subscription");
+        }
+    };
+
     if (!data) return <div className="text-white">Loading data...</div>;
 
     const { user, workouts, diets, water, sleep, weights, plans } = data;
@@ -66,7 +87,118 @@ const UserDetail = () => {
                         <span className="text-white">{user.weight ? `${user.weight} kg` : 'N/A'}</span>
                     </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-800">
+                    {/* Health Profile */}
+                    <div>
+                        <h4 className="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-3">Health Profile</h4>
+                        <div className="space-y-3">
+                            <div>
+                                <span className="text-slate-400 text-sm">Conditions: </span>
+                                {user.healthConditions && user.healthConditions.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {user.healthConditions.map((c, i) => (
+                                            <span key={i} className="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded border border-slate-700">{c}</span>
+                                        ))}
+                                    </div>
+                                ) : <span className="text-slate-600 text-sm">None listed</span>}
+                            </div>
+                            <div>
+                                <span className="text-slate-400 text-sm">Injuries: </span>
+                                {user.injuries && user.injuries.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {user.injuries.map((inj, i) => (
+                                            <span key={i} className="bg-red-900/20 text-red-400 text-xs px-2 py-1 rounded border border-red-900/50">{inj}</span>
+                                        ))}
+                                    </div>
+                                ) : <span className="text-slate-600 text-sm">None listed</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Subscription Status */}
+                    <div>
+                        <div className="flex justify-between items-center mb-3">
+                            <h4 className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Subscription</h4>
+                            <button
+                                onClick={() => {
+                                    setSubForm({
+                                        plan: user.subscription?.plan || 'Free',
+                                        status: user.subscription?.status || 'Active',
+                                        endDate: user.subscription?.endDate ? user.subscription.endDate.split('T')[0] : ''
+                                    });
+                                    setShowSubModal(true);
+                                }}
+                                className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+                            >
+                                <Edit size={12} /> Edit
+                            </button>
+                        </div>
+                        {user.subscription ? (
+                            <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-white font-medium">{user.subscription.plan} Plan</span>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${user.subscription.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                        {user.subscription.status}
+                                    </span>
+                                </div>
+                                <div className="text-xs text-slate-400">
+                                    {user.subscription.autoRenew ? 'Auto-renews' : 'Expires'} on {new Date(user.subscription.endDate || Date.now()).toLocaleDateString()}
+                                </div>
+                            </div>
+                        ) : (
+                            <span className="text-slate-600 text-sm">No subscription data</span>
+                        )}
+                    </div>
+                </div>
             </header>
+
+            {showSubModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+                        <h3 className="text-xl font-bold text-white mb-4">Edit Subscription</h3>
+                        <form onSubmit={handleSubUpdate} className="space-y-4">
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2">Plan</label>
+                                <select
+                                    value={subForm.plan}
+                                    onChange={(e) => setSubForm({ ...subForm, plan: e.target.value })}
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                >
+                                    <option value="Free">Free</option>
+                                    <option value="Pro">Pro</option>
+                                    <option value="Premium">Premium</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2">Status</label>
+                                <select
+                                    value={subForm.status}
+                                    onChange={(e) => setSubForm({ ...subForm, status: e.target.value })}
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                >
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2">End Date</label>
+                                <input
+                                    type="date"
+                                    value={subForm.endDate}
+                                    onChange={(e) => setSubForm({ ...subForm, endDate: e.target.value })}
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button type="button" onClick={() => setShowSubModal(false)} className="flex-1 text-slate-400 hover:text-white py-2">Cancel</button>
+                                <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-xl font-medium">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-h-[400px] overflow-y-auto">

@@ -63,7 +63,40 @@ const addWorkout = async (req, res) => {
 
         const newBadges = await checkBadges(user, totalWorkouts, totalVolume);
 
-        res.status(201).json({ workout, newBadges });
+        // --- Adaptive Plan Logic ---
+        if (req.body.rating && req.body.rating !== 'Good') {
+            const Program = require('../models/Program');
+            const activeProgram = await Program.findOne({ client: req.user._id, isActive: true });
+
+            if (activeProgram) {
+                let planUpdated = false;
+                const workoutExercises = req.body.exercises.map(e => e.name.toLowerCase());
+
+                activeProgram.weeks.forEach(week => {
+                    week.days.forEach(day => {
+                        day.exercises.forEach(ex => {
+                            if (workoutExercises.includes(ex.name.toLowerCase())) {
+                                if (req.body.rating === 'Too Easy') {
+                                    ex.weight = Math.ceil((ex.weight || 0) * 1.05 / 2.5) * 2.5; // +5%, round to 2.5
+                                    if (ex.weight === 0) ex.weight = 2.5; // Start somewhere
+                                    planUpdated = true;
+                                } else if (req.body.rating === 'Too Hard' && ex.weight > 0) {
+                                    ex.weight = Math.floor((ex.weight || 0) * 0.90 / 2.5) * 2.5; // -10%
+                                    planUpdated = true;
+                                }
+                            }
+                        });
+                    });
+                });
+
+                if (planUpdated) {
+                    await activeProgram.save();
+                    // Optionally notify user via response
+                }
+            }
+        }
+
+        res.status(201).json({ workout, newBadges, message: req.body.rating !== 'Good' ? 'Plan adapted based on your feedback!' : 'Workout logged!' });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

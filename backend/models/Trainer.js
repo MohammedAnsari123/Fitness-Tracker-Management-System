@@ -8,7 +8,9 @@ const trainerSchema = mongoose.Schema({
     bio: { type: String },
     role: { type: String, default: 'trainer' },
     clients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    programs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Program' }]
+    programs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Program' }],
+    isApproved: { type: Boolean, default: false },
+    isSuspended: { type: Boolean, default: false }
 }, {
     timestamps: true
 });

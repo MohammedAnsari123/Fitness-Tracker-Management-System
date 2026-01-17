@@ -6,7 +6,13 @@ const {
     deleteUser,
     getSystemStats,
     assignPlan,
-    deletePlan
+    deletePlan,
+    updateUserSubscription,
+    updateUserSubscription,
+    toggleBlockUser,
+    getAllTrainers,
+    approveTrainer,
+    toggleSuspendTrainer
 } = require('../controllers/adminController');
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 
@@ -14,10 +20,16 @@ router.use(protect);
 router.use(adminOnly);
 
 router.get('/users', getAllUsers);
-router.get('/users/:id', protect, adminOnly, getUserFullData);
-router.delete('/users/:id', protect, adminOnly, deleteUser);
-router.post('/users/:id/plan', protect, adminOnly, assignPlan);
-router.delete('/plans/:id', protect, adminOnly, deletePlan);
-router.get('/stats', protect, adminOnly, getSystemStats);
+router.get('/users/:id', getUserFullData);
+router.delete('/users/:id', deleteUser);
+router.put('/users/:id/block', toggleBlockUser);
+router.post('/users/:id/plan', assignPlan);
+router.put('/users/:id/subscription', updateUserSubscription);
+router.delete('/plans/:id', deletePlan);
+router.get('/stats', getSystemStats);
+
+router.get('/trainers', getAllTrainers);
+router.put('/trainers/:id/approve', approveTrainer);
+router.put('/trainers/:id/suspend', toggleSuspendTrainer);
 
 module.exports = router;

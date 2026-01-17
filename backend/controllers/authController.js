@@ -157,6 +157,12 @@ const loginTrainer = async (req, res) => {
     const trainer = await Trainer.findOne({ email });
 
     if (trainer && (await bcrypt.compare(password, trainer.password))) {
+        if (trainer.isSuspended) {
+            return res.status(401).json({ message: 'Account suspended. Contact admin.' });
+        }
+        if (!trainer.isApproved) {
+            return res.status(401).json({ message: 'Account pending approval. Please wait for admin verification.' });
+        }
         res.json({
             _id: trainer.id,
             name: trainer.name,

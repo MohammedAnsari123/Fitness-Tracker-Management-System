@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Eye, Trash2 } from 'lucide-react';
+import { Eye, Trash2, Ban, CheckCircle } from 'lucide-react';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -37,8 +37,25 @@ const UserList = () => {
         }
     };
 
+    const handleToggleBlock = async (user) => {
+        const action = user.isBlocked ? 'unblock' : 'block';
+        if (window.confirm(`Are you sure you want to ${action} this user?`)) {
+            const token = localStorage.getItem('adminToken');
+            try {
+                await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${user._id}/block`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                // Optimistic UI update
+                setUsers(users.map(u => u._id === user._id ? { ...u, isBlocked: !u.isBlocked } : u));
+            } catch (error) {
+                console.error(error);
+                alert(`Failed to ${action} user`);
+            }
+        }
+    };
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
             <h1 className="text-3xl font-bold text-white">User Management</h1>
 
             <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
@@ -48,6 +65,7 @@ const UserList = () => {
                             <th className="px-6 py-4 text-gray-400 font-medium">Name</th>
                             <th className="px-6 py-4 text-gray-400 font-medium">Email</th>
                             <th className="px-6 py-4 text-gray-400 font-medium">Joined</th>
+                            <th className="px-6 py-4 text-gray-400 font-medium">Status</th>
                             <th className="px-6 py-4 text-gray-400 font-medium">Actions</th>
                         </tr>
                     </thead>
@@ -58,6 +76,12 @@ const UserList = () => {
                                 <td className="px-6 py-4 text-gray-300">{user.email}</td>
                                 <td className="px-6 py-4 text-gray-400">{new Date(user.createdAt).toLocaleDateString()}</td>
                                 <td className="px-6 py-4">
+                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${user.isBlocked ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'
+                                        }`}>
+                                        {user.isBlocked ? 'Suspended' : 'Active'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
                                     <div className="flex space-x-3">
                                         <Link
                                             to={`/users/${user._id}`}
@@ -66,6 +90,16 @@ const UserList = () => {
                                         >
                                             <Eye size={18} />
                                         </Link>
+                                        <button
+                                            onClick={() => handleToggleBlock(user)}
+                                            className={`p-2 rounded-lg transition-colors ${user.isBlocked
+                                                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
+                                                    : 'bg-orange-500/10 text-orange-500 hover:bg-orange-500/20'
+                                                }`}
+                                            title={user.isBlocked ? "Unblock User" : "Block User"}
+                                        >
+                                            {user.isBlocked ? <CheckCircle size={18} /> : <Ban size={18} />}
+                                        </button>
                                         <button
                                             onClick={() => handleDelete(user._id)}
                                             className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"

@@ -19,6 +19,32 @@ const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
+    const fetchConversations = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${ENDPOINT}/api/chat/conversations`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setConversations(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching conversations", error);
+            setLoading(false);
+        }
+    };
+
+    const fetchMessages = async (otherId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${ENDPOINT}/api/chat/${otherId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setMessages(res.data);
+        } catch (error) {
+            console.error("Error fetching messages", error);
+        }
+    };
+
     // Initialize Socket (remains same)
     useEffect(() => {
         if (user) {
@@ -91,37 +117,7 @@ const Chat = () => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    const fetchConversations = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${ENDPOINT}/api/chat/conversations`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setConversations(res.data);
 
-            // Auto-select if only one conversation (e.g., Trainer)
-            // if (res.data.length === 1) {
-            //     setActiveChat(res.data[0]);
-            // }
-
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching conversations", error);
-            setLoading(false);
-        }
-    };
-
-    const fetchMessages = async (otherId) => {
-        try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${ENDPOINT}/api/chat/${otherId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setMessages(res.data);
-        } catch (error) {
-            console.error("Error fetching messages", error);
-        }
-    };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
@@ -133,7 +129,7 @@ const Chat = () => {
             senderId: user._id,
             senderModel: 'User',
             receiverId: activeChat._id,
-            receiverModel: 'Trainer',
+            receiverModel: activeChat.type || 'Trainer',
             message: newMessage,
             createdAt: new Date().toISOString()
         };
@@ -143,10 +139,10 @@ const Chat = () => {
 
         try {
             const token = localStorage.getItem('token');
-            // User chats with Trainer
+            // User chats with Trainer or other User
             await axios.post(`${ENDPOINT}/api/chat/send`, {
                 receiverId: activeChat._id,
-                receiverModel: 'Trainer',
+                receiverModel: activeChat.type || 'Trainer',
                 message: tempMsg.message
             }, {
                 headers: { Authorization: `Bearer ${token}` }

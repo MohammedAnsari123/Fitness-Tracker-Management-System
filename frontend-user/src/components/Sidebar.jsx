@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Activity, Users, Dumbbell, Utensils, GlassWater, Moon, Weight, Target, History, LogOut, User, Calendar, Trophy, Camera, Calculator, X, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Activity, Users, Dumbbell, Utensils, GlassWater, Moon, Weight, Target, History, LogOut, User, Calendar, Trophy, Camera, Calculator, X, MessageSquare, Bell, Sparkles, Watch } from 'lucide-react';
 
 const Sidebar = ({ logout, isOpen, onClose }) => {
     const location = useLocation();
@@ -19,7 +19,11 @@ const Sidebar = ({ logout, isOpen, onClose }) => {
         { path: '/tools', name: 'Tools', icon: Calculator },
         { path: '/challenges', name: 'Challenges', icon: Trophy },
         { path: '/chat', name: 'Messages', icon: MessageSquare },
+        { path: '/notifications', name: 'Notifications', icon: Bell },
+        { path: '/ai-coach', name: 'AI Coach', icon: Sparkles },
+        { path: '/wearables', name: 'Devices', icon: Watch },
         { path: '/gallery', name: 'Gallery', icon: Camera },
+        { path: '/support', name: 'Support', icon: MessageSquare },
         { path: '/history', name: 'History', icon: History },
         { path: '/profile', name: 'Profile', icon: User },
     ];

@@ -143,6 +143,12 @@ const Clients = () => {
                                     View Profile
                                 </button>
                                 <button
+                                    onClick={() => navigate(`/clients/${client._id}/progress`)}
+                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-slate-300 py-2 rounded-lg text-sm font-medium border border-slate-800 transition-colors"
+                                >
+                                    Analytics
+                                </button>
+                                <button
                                     onClick={() => handleAssignPlan(client._id)}
                                     className="flex-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-400 py-2 rounded-lg text-sm font-medium border border-cyan-900/30 transition-colors"
                                 >
@@ -195,7 +201,7 @@ const Clients = () => {
                 </div>
             )}
 
-]            {selectedClient && (
+            ]            {selectedClient && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-surface border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl animate-fade-in-up relative">
                         <button
@@ -239,6 +245,38 @@ const Clients = () => {
                                     <h3 className="text-sm font-semibold text-slate-300 mb-2 uppercase tracking-wider">Current Goal</h3>
                                     <p className="text-white capitalize">{selectedClient.goals.primaryGoal?.replace('-', ' ') || 'None set'}</p>
                                     <div className="mt-2 text-sm text-slate-400">Target Weight: {selectedClient.goals.targetWeight || '-'} kg</div>
+                                </div>
+                            )}
+
+                            {(selectedClient.healthConditions?.length > 0 || selectedClient.injuries?.length > 0) && (
+                                <div className="bg-slate-950/50 p-4 rounded-xl border border-red-900/30">
+                                    <h3 className="text-sm font-semibold text-red-400 mb-3 uppercase tracking-wider flex items-center gap-2">
+                                        <Activity size={16} /> Health Profile
+                                    </h3>
+
+                                    {selectedClient.healthConditions?.length > 0 && (
+                                        <div className="mb-3">
+                                            <span className="text-xs text-slate-500 block mb-1">Conditions</span>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedClient.healthConditions.map((c, i) => (
+                                                    <span key={i} className="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md border border-slate-700">{c}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {selectedClient.injuries?.length > 0 && (
+                                        <div>
+                                            <span className="text-xs text-slate-500 block mb-1">Injuries (Caution)</span>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedClient.injuries.map((inj, i) => (
+                                                    <span key={i} className="bg-red-900/20 text-red-400 text-xs px-2 py-1 rounded-md border border-red-900/50 flex items-center gap-1">
+                                                        <Activity size={12} /> {inj}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

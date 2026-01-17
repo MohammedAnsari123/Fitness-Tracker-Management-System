@@ -151,11 +151,111 @@ const deletePlan = async (req, res) => {
     }
 };
 
+const updateUserSubscription = async (req, res) => {
+    try {
+        const { plan, status, endDate } = req.body;
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.subscription = {
+            plan: plan || user.subscription.plan,
+            status: status || user.subscription.status,
+            endDate: endDate || user.subscription.endDate,
+            startDate: user.subscription.startDate, // Keep original start date
+            autoRenew: user.subscription.autoRenew // Keep original autoRenew
+        };
+
+        if (endDate) {
+            // Ensure date object if string passed
+            user.subscription.endDate = new Date(endDate);
+        }
+
+        const updatedUser = await user.save();
+
+        // Create Notification
+        const Notification = require('../models/Notification');
+        await Notification.create({
+            user: user._id,
+            type: 'info',
+            message: `Your subscription has been updated to ${updatedUser.subscription.plan} (${updatedUser.subscription.status}).`
+        });
+
+        res.json(updatedUser.subscription);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const toggleBlockUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.isBlocked = !user.isBlocked;
+        await user.save();
+
+        res.json({
+            message: `User ${user.isBlocked ? 'blocked' : 'unblocked'}`,
+            isBlocked: user.isBlocked
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getAllTrainers = async (req, res) => {
+    try {
+        const trainers = await require('../models/Trainer').find({}).select('-password');
+        res.json(trainers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const approveTrainer = async (req, res) => {
+    try {
+        const trainer = await require('../models/Trainer').findById(req.params.id);
+        if (!trainer) return res.status(404).json({ message: 'Trainer not found' });
+
+        trainer.isApproved = true;
+        await trainer.save();
+
+        res.json({ message: 'Trainer approved' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const toggleSuspendTrainer = async (req, res) => {
+    try {
+        const trainer = await require('../models/Trainer').findById(req.params.id);
+        if (!trainer) return res.status(404).json({ message: 'Trainer not found' });
+
+        trainer.isSuspended = !trainer.isSuspended;
+        await trainer.save();
+
+        res.json({
+            message: `Trainer ${trainer.isSuspended ? 'suspended' : 'unsuspended'}`,
+            isSuspended: trainer.isSuspended
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAllUsers,
     getUserFullData,
     deleteUser,
     getSystemStats,
     assignPlan,
-    deletePlan
+    deletePlan,
+    updateUserSubscription,
+    toggleBlockUser,
+    getAllTrainers,
+    approveTrainer,
+    toggleSuspendTrainer
 };

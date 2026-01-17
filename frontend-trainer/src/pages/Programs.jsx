@@ -27,6 +27,26 @@ const Programs = () => {
         }
     }, [location.state]);
 
+    useEffect(() => {
+        if (selectedClient) {
+            fetchPrograms(selectedClient);
+        } else {
+            setPrograms([]);
+        }
+    }, [selectedClient]);
+
+    const fetchPrograms = async (clientId) => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/programs/${clientId}`, config);
+            setPrograms(res.data);
+            setLoading(false);
+        } catch (err) {
+            console.error(err);
+            setLoading(false);
+        }
+    };
+
     const fetchClients = async () => {
         try {
             const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', config);
@@ -78,12 +98,45 @@ const Programs = () => {
                 </button>
             </header>
 
-            <div className="bg-surface border border-slate-800 rounded-2xl p-10 text-center">
-                <FileText size={48} className="mx-auto text-slate-600 mb-4" />
-                <h2 className="text-xl font-bold text-white mb-2">Manage Programs</h2>
-                <p className="text-slate-400 max-w-md mx-auto">
-                    Select a client to view their active programs or create a new one.
-                </p>
+            {/* Client Selector & Program List */}
+            <div className="space-y-6">
+                <div className="bg-surface border border-slate-800 rounded-2xl p-6">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Select Client to View Programs</label>
+                    <select
+                        className="w-full md:w-1/2 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-cyan-500 outline-none"
+                        value={selectedClient}
+                        onChange={(e) => setSelectedClient(e.target.value)}
+                    >
+                        <option value="">-- Select Client --</option>
+                        {clients.map(client => (
+                            <option key={client._id} value={client._id}>{client.name} ({client.email})</option>
+                        ))}
+                    </select>
+                </div>
+
+                {selectedClient && (
+                    <div className="grid gap-4">
+                        {loading && <p className="text-slate-400">Loading programs...</p>}
+                        {!loading && programs.length === 0 && (
+                            <div className="text-center p-10 border border-dashed border-slate-800 rounded-2xl text-slate-500">
+                                No programs found for this client. Create one above.
+                            </div>
+                        )}
+                        {programs.map(program => (
+                            <div key={program._id} className="bg-surface border border-slate-800 rounded-2xl p-6 flex justify-between items-center hover:border-cyan-500/50 transition-colors">
+                                <div>
+                                    <h3 className="text-xl font-bold text-white">{program.name}</h3>
+                                    <p className="text-slate-400 text-sm">{program.weeks.length} Weeks • {new Date(program.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <a href={`/programs/${program._id}`} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                                        Edit / Details
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {showCreateModal && (

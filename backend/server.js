@@ -3,13 +3,18 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
+const http = require('http');
+const { Server } = require("socket.io");
+const path = require('path');
+const initScheduler = require('./utils/scheduler');
 
 connectDB();
 
+// Init Scheduler
+initScheduler();
+
 const app = express();
-const nav = require('http');
-const server = nav.createServer(app);
-const { Server } = require("socket.io");
+const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -60,14 +65,19 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/tracker', require('./routes/trackerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/admin/content', require('./routes/adminContentRoutes'));
 app.use('/api/challenges', require('./routes/challengeRoutes'));
 app.use('/api/gallery', require('./routes/galleryRoutes'));
 app.use('/api/social', require('./routes/socialRoutes'));
 app.use('/api/trainer', require('./routes/trainerRoutes'));
+app.use('/api/trainer', require('./routes/trainerRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
+app.use('/api/wearables', require('./routes/wearableRoutes'));
+app.use('/api/support', require('./routes/supportRoutes'));
 
-const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/', (req, res) => {

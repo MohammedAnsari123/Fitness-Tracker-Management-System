@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
         enum: ['user', 'admin', 'trainer'],
         default: 'user'
     },
+    isBlocked: { type: Boolean, default: false },
 
     social: {
         friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -49,7 +50,29 @@ const userSchema = mongoose.Schema({
         dailyCalories: { type: Number, default: 2000 },
         weeklyWorkouts: { type: Number, default: 3 },
         targetWeight: { type: Number }
-    }
+    },
+
+    healthConditions: [{ type: String }],
+    injuries: [{ type: String }],
+
+    subscription: {
+        plan: {
+            type: String,
+            enum: ['Free', 'Pro', 'Premium'],
+            default: 'Free'
+        },
+        status: {
+            type: String,
+            enum: ['Active', 'Inactive', 'Cancelled'],
+            default: 'Active'
+        },
+        startDate: { type: Date, default: Date.now },
+        endDate: { type: Date },
+        autoRenew: { type: Boolean, default: false }
+    },
+
+    pushToken: { type: String },
+    connectedDevices: [{ type: String }]
 }, {
     timestamps: true
 });

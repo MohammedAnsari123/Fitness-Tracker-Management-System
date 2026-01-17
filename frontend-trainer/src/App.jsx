@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import Programs from './pages/Programs';
+import ProgramBuilder from './pages/ProgramBuilder';
+import ClientProgress from './pages/ClientProgress';
 import Exercises from './pages/Exercises';
 import Nutrition from './pages/Nutrition';
 import Templates from './pages/Templates';
@@ -24,7 +26,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="clients" element={<Clients />} />
+            <Route path="clients/:id/progress" element={<ClientProgress />} />
             <Route path="programs" element={<Programs />} />
+            <Route path="programs/:id" element={<ProgramBuilder />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="nutrition" element={<Nutrition />} />
             <Route path="templates" element={<Templates />} />

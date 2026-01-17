@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, LogOut, Shield, FileText, Dumbbell, Utensils, Trophy, X } from 'lucide-react';
+import { LayoutDashboard, Users, User, Dumbbell, ClipboardList, LogOut, Bell, MessageSquare, CreditCard } from 'lucide-react';
 
 const Sidebar = ({ logout, isOpen, onClose }) => {
     const location = useLocation();
@@ -8,6 +8,10 @@ const Sidebar = ({ logout, isOpen, onClose }) => {
     const menuItems = [
         { path: '/', name: 'Dashboard', icon: LayoutDashboard },
         { path: '/users', name: 'User Management', icon: Users },
+        { path: '/trainers', name: 'Trainers', icon: User },
+        { path: '/payments', name: 'Payments', icon: CreditCard },
+        { path: '/notifications', name: 'Push Alerts', icon: Bell },
+        { path: '/support', name: 'Support Tickets', icon: MessageSquare },
         { path: '/templates', name: 'Plan Templates', icon: FileText },
         { path: '/exercises', name: 'Exercise Library', icon: Dumbbell },
         { path: '/foods', name: 'Food Database', icon: Utensils },

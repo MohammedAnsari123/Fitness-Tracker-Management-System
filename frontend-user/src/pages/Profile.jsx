@@ -12,9 +12,12 @@ const Profile = () => {
         gender: '',
         height: '',
         weight: '',
+        healthConditions: '',
+        injuries: '',
         password: ''
     });
     const [msg, setMsg] = useState('');
+    const [subscription, setSubscription] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -25,8 +28,13 @@ const Profile = () => {
                 gender: user.gender || '',
                 height: user.height || '',
                 weight: user.weight || '',
+                healthConditions: user.healthConditions ? user.healthConditions.join(', ') : '',
+                injuries: user.injuries ? user.injuries.join(', ') : '',
                 password: ''
             });
+            if (user.subscription) {
+                setSubscription(user.subscription);
+            }
         }
     }, [user]);
 
@@ -125,6 +133,54 @@ const Profile = () => {
                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                             />
                         </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-slate-600 text-sm mb-2 font-medium">Health Conditions (comma separated)</label>
+                            <input
+                                name="healthConditions"
+                                value={formData.healthConditions}
+                                onChange={handleChange}
+                                placeholder="e.g. Asthma, Diabetes"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-slate-600 text-sm mb-2 font-medium">Injuries (comma separated)</label>
+                            <input
+                                name="injuries"
+                                value={formData.injuries}
+                                onChange={handleChange}
+                                placeholder="e.g. Knee pain, Lower back pain"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                            />
+                        </div>
+
+                        {subscription && (
+                            <div className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-100">
+                                <h3 className="font-bold text-purple-900 mb-4 flex items-center gap-2">
+                                    Subscription Status
+                                    <span className={`text-xs px-2 py-1 rounded-full ${subscription.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                        {subscription.status}
+                                    </span>
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-slate-500">Plan</p>
+                                        <p className="font-semibold text-slate-800">{subscription.plan}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500">Auto Renew</p>
+                                        <p className="font-semibold text-slate-800">{subscription.autoRenew ? 'On' : 'Off'}</p>
+                                    </div>
+                                    {subscription.endDate && (
+                                        <div className="col-span-2">
+                                            <p className="text-slate-500">Expires</p>
+                                            <p className="font-semibold text-slate-800">{new Date(subscription.endDate).toLocaleDateString()}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="md:col-span-2">
                             <label className="block text-slate-600 text-sm mb-2 font-medium">New Password (Optional)</label>
                             <input

@@ -19,6 +19,32 @@ const Chat = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
+    const fetchConversations = async () => {
+        try {
+            const token = localStorage.getItem('trainerToken');
+            const res = await axios.get(`${ENDPOINT}/api/chat/conversations`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setConversations(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching conversations", error);
+            setLoading(false);
+        }
+    };
+
+    const fetchMessages = async (otherId) => {
+        try {
+            const token = localStorage.getItem('trainerToken');
+            const res = await axios.get(`${ENDPOINT}/api/chat/${otherId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setMessages(res.data);
+        } catch (error) {
+            console.error("Error fetching messages", error);
+        }
+    };
+
     // Initialize Socket (remains same)
     useEffect(() => {
         if (trainer) {
@@ -87,11 +113,43 @@ const Chat = () => {
         }
     }, [activeChat]);
 
-    // ... (Scroll effect remains same)
+    useEffect(() => {
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
-    // ... (fetchConversations and fetchMessages remain same)
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!newMessage.trim() || !activeChat) return;
 
-    // ... (handleSendMessage remains same)
+        // Optimistic Update
+        const tempMsg = {
+            _id: Date.now().toString(),
+            senderId: trainer._id,
+            senderModel: 'Trainer',
+            receiverId: activeChat._id,
+            receiverModel: activeChat.type || 'User',
+            message: newMessage,
+            createdAt: new Date().toISOString()
+        };
+
+        setMessages((prev) => [...prev, tempMsg]);
+        setNewMessage('');
+
+        try {
+            const token = localStorage.getItem('trainerToken');
+            await axios.post(`${ENDPOINT}/api/chat/send`, {
+                receiverId: activeChat._id,
+                receiverModel: activeChat.type || 'User',
+                message: tempMsg.message
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.error("Error sending message", error);
+            setMessages((prev) => prev.filter(m => m._id !== tempMsg._id));
+            alert("Failed to send message");
+        }
+    };
 
     const handleSelectChat = (chat) => {
         setActiveChat(chat);

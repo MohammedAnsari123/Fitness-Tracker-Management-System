@@ -17,6 +17,10 @@ const protect = async (req, res, next) => {
 
             req.user = await User.findById(decoded.id).select('-password');
             if (req.user) {
+                if (req.user.isBlocked) {
+                    res.status(401);
+                    throw new Error('Account suspended. Contact admin.');
+                }
                 console.log('Found User:', req.user._id);
                 return next();
             }
