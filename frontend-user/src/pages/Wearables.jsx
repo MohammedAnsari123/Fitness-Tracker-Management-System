@@ -24,7 +24,7 @@ const Wearables = () => {
         // Let's quickly fetch profile to be accurate
         const fetchProfile = async () => {
             try {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/profile', config);
+                const res = await axios.get('http://localhost:5000/api/users/profile', config);
                 if (res.data.connectedDevices) setConnectedDevices(res.data.connectedDevices);
             } catch (error) {
                 console.error(error);
@@ -36,7 +36,7 @@ const Wearables = () => {
     const handleConnect = async (provider) => {
         setLoading(true);
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/wearables/connect', { provider }, config);
+            const res = await axios.post('http://localhost:5000/api/wearables/connect', { provider }, config);
             setConnectedDevices(res.data.connectedDevices);
             alert(`Connected to ${provider}`);
         } catch (error) {
@@ -51,7 +51,7 @@ const Wearables = () => {
         if (!window.confirm(`Disconnect ${provider}?`)) return;
         setLoading(true);
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/wearables/disconnect', { provider }, config);
+            const res = await axios.post('http://localhost:5000/api/wearables/disconnect', { provider }, config);
             setConnectedDevices(res.data.connectedDevices);
         } catch (error) {
             console.error(error);
@@ -63,7 +63,7 @@ const Wearables = () => {
     const handleSync = async () => {
         setSyncing(true);
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/wearables/sync', config);
+            const res = await axios.get('http://localhost:5000/api/wearables/sync', config);
             setMockData(res.data.data);
             alert('Synced successfully!');
         } catch (error) {

@@ -1,243 +1,217 @@
-# 🏋️ Fitness Tracker Management System - System Documentation
+# 🏋️ Fitness Tracker Management System - System Design Document
 
-**Version:** 1.0.0
-**Status:** In Development
-**License:** ISC
-
----
-
-## 📖 Table of Contents
-1.  [Project Overview](#-project-overview)
-2.  [System Architecture](#-system-architecture)
-3.  [Core Features](#-core-features)
-4.  [Technology Stack](#-technology-stack)
-5.  [Installation & Setup Guide](#-installation--setup-guide)
-6.  [Directory Structure](#-directory-structure)
-7.  [API Documentation Overview](#-api-documentation-overview)
-8.  [Contribution Guidelines](#-contribution-guidelines)
+**Version:** 1.0.0 released
+**Date:** January 17, 2026
+**Author:** Mohammed Ansari
+**Tech Stack:** MERN (MongoDB, Express, React, Node.js)
 
 ---
 
-## 🚀 Project Overview
+## 1. Executive Summary
 
-The **Fitness Tracker Management System** is a robust, full-stack web application designed to bridge the gap between personal fitness tracking and administrative management. It serves two distinct user groups:
-1.  **Fitness Enthusiasts**: Individuals who want to track their workouts, diet, hydration, sleep, and physical progress.
-2.  **Administrators/Trainers**: System managers who curate exercise content, manage nutritional databases, oversee user challenges, and monitor system usage.
+The **Fitness Tracker Management System** is an enterprise-grade web platform designed to digitize the personal training industry. It provides a seamless ecosystem for three distinct user roles: **Clients** (seeking health improvement), **Trainers** (managing fitness businesses), and **Administrators** (overseeing platform operations).
 
-This project utilizes the **MERN Stack** (MongoDB, Express.js, React.js, Node.js) to deliver a seamless, responsive, and real-time experience.
+Unlike standard fitness apps, this platform integrates **AI-driven coaching**, **Real-time Communication**, **Financial Management**, and **Gamification** into a single, cohesive architecture.
 
 ---
 
-## 🏗 System Architecture
+## 2. System Architecture
 
-The application follows a modern **Monorepo-style** architecture, separating concerns between three distinct React frontends and a centralized Node.js/Express backend.
+The application implements a **Service-Oriented Architecture (SOA)** within a Monorepo structure, ensuring separation of concerns while maintaining a unified codebase.
 
-### System Diagram
-
+### 2.1 High-Level Design
 ```mermaid
 graph TD
-    subgraph Clients
-        UserUI["👤 User Portal<br/>(React + Vite)"]
-        TrainerUI["🏋️‍♂️ Trainer Portal<br/>(React + Vite)"]
-        AdminUI["🛡️ Admin Portal<br/>(React + Vite)"]
+    Client[User Browser]
+    Trainer[Trainer Browser]
+    Admin[Admin Browser]
+    
+    LB[Load Balancer / API Gateway]
+    
+    subgraph "Backend Services (Node.js/Express)"
+        AuthService[Auth Controller]
+        UserService[User/Tracker Controller]
+        TrainerService[Trainer Controller]
+        AdminService[Admin Controller]
+        PaymentService[Finance Controller]
+        ChatService[Socket.io Server]
+        NotifyService[Notification Service]
+    end
+    
+    subgraph "Data Persistence Layer"
+        PrimaryDB[(MongoDB Primary)]
+        FileStore[Local File Storage /uploads]
+    end
+    
+    subgraph "External Integrations"
+        StripeAPI[Stripe Payment Gateway]
+        EmailAPI[Nodemailer SMTP]
     end
 
-    subgraph Server_Layer
-        LB["API Gateway / Server<br/>(Express.js)"]
-        Auth["🔐 Auth Service<br/>(JWT + Bcrypt)"]
-        Logic["🧠 Business Logic<br/>(Controllers)"]
-    end
-
-    subgraph Data_Layer
-        DB[("🍃 MongoDB")]
-        Storage["📂 Local Storage<br/>(Images/Uploads)"]
-    end
-
-    UserUI -- HTTP/JSON --> LB
-    TrainerUI -- HTTP/JSON --> LB
-    AdminUI -- HTTP/JSON --> LB
-
-    LB --> Auth
-    LB --> Logic
-    Logic --> DB
-    Logic --> Storage
-```
-
-### High-Level Components
-*   **Client Layer**: Three separate Single Page Applications (SPAs) tailored for specific roles.
-*   **Service Layer**: A RESTful Express server handling routing, validation, and authorization.
-*   **Data Layer**: MongoDB for persistent data and local filesystem for media storage.
-
----
-
-## ✨ Core Features
-
-### 👤 User Portal (Frontend-User)
-Designed for motivation and ease of use.
-*   **Dashboard**: A summary view of daily logging status (Calories, Water, Sleep) and recent activity.
-*   **Workout Tracker**:
-    *   Custom Workout Logging (Sets, Reps, Weight).
-    *   Duration Timer.
-    *   Access to Global Exercise Library.
-*   **Nutrition Manager**:
-    *   Search Food Database.
-    *   Log meals (Breakfast, Lunch, Dinner, Snacks).
-    *   Calorie & Macro tracking.
-*   **Vital Tracking**:
-    *   **Hydration**: Tap to log water glasses.
-    *   **Sleep**: Log sleep duration and quality.
-    *   **Weight**: Track body weight changes with history.
-*   **Social Hub**:
-    *   **Community Feed**: See friends' activities.
-    *   **Leaderboards**: Compete on XP and achievements.
-    *   **Direct Messaging**: Real-time chat with Trainers.
-*   **Analytics & Gamification**:
-    *   **Badges**: Earn rewards for consistency.
-    *   **PR Tracking**: Monitor Personal Records.
-    *   **1RM Calculator**: Estimate max strength.
-
-### 🏋️‍♂️ Trainer Portal (Frontend-Trainer)
-Designed for coaching and client management.
-*   **Client Management**: List of assigned clients with quick stats.
-*   **Program Builder**: Create and assign custom Workout and Diet plans.
-*   **Chat System**: Direct communication with clients.
-*   **Content Creation**: Add custom exercises and templates.
-
-### 🛡️ Admin Portal (Frontend-Admin)
-Designed for content curation and user oversight.
-*   **System Dashboard**: Global counts of users, workouts logged, and system health.
-*   **Content Management Systems (CMS)**:
-    *   **Exercise Library**: Add/Update/Delete standard exercises (e.g., "Bench Press", "Squat").
-    *   **Food Database**: Manage nutritional info for common foods.
-    *   **Workout Templates**: Create "Day 1" or "Full Body" templates for users.
-*   **User Management**: View user list, detailed profiles, and activity logs.
-*   **Challenge Management**: Create, Edit, and Delete system-wide challenges.
-
----
-
-## 🛠 Technology Stack
-
-### Backend
-*   **Runtime**: Node.js (v18+)
-*   **Framework**: Express.js
-*   **Database**: MongoDB (Mongoose ODM)
-*   **Authentication**: JSON Web Tokens (JWT), bcryptjs
-*   **Middleware**: CORS, Dotenv, Multer (File Uploads)
-
-### Frontend (User & Admin)
-*   **Library**: React.js (v18)
-*   **Build Tool**: Vite
-*   **Styling**: Tailwind CSS
-*   **Icons**: Lucide React
-*   **HTTP Client**: Axios
-*   **Routing**: React Router DOM (v6)
-
----
-
-## 📂 Directory Structure
-
-A high-level view of the project workspace:
-
-```bash
-Fitness Tracker Management System/
-├── backend/                  # 🟢 Node.js API Server
-│   ├── config/               # DB & Env Configurations
-│   ├── controllers/          # Route Logic (Auth, Tracker, etc.)
-│   ├── models/               # Mongoose Schemas
-│   ├── routes/               # Express Routes
-│   └── server.js             # Entry Point
-│
-├── frontend-user/            # 👤 Client React App
-│   ├── src/
-│   │   ├── components/       # Reusable UI Components
-│   │   ├── pages/            # Application Screens
-│   │   └── context/          # State Management
-│
-├── frontend-trainer/         # 🏋️‍♂️ Trainer React App
-│   ├── src/                  # Trainer-specific Views & Logic
-│
-└── frontend-admin/           # 🛡️ Admin React App
-    ├── src/                  # Admin-specific Data Management
+    Client --> LB
+    Trainer --> LB
+    Admin --> LB
+    
+    LB --> AuthService
+    LB --> UserService
+    LB --> TrainerService
+    LB --> PaymentService
+    
+    UserService --> PrimaryDB
+    TrainerService --> PrimaryDB
+    PaymentService --> StripeAPI
+    NotifyService --> EmailAPI
+    ChatService --> PrimaryDB
 ```
 
 ---
 
-## ⚙️ Installation & Setup Guide
+## 3. Data Models (Database Schema)
 
-### Prerequisites
-1.  **Node.js**: Ensure Node.js is installed.
-2.  **MongoDB**: A local instance or a connection string to MongoDB Atlas.
+The database is built on **MongoDB**, utilizing **Mongoose** for object modeling. Key collections include:
 
-### Step 1: Backend Setup
-1.  Navigate to the backend folder:
+### 3.1 Core Users
+*   **Users**: Stores Client profile, biometric data (height, weight, age), goals, and active subscription status.
+*   **Trainers**: Stores professional details, specializations, earnings, and assigned clients.
+*   **Admins**: Super-user accounts with system-wide access.
+
+### 3.2 Fitness Data
+*   **Workouts**: Daily exercise logs with sets, reps, and weights.
+*   **Exercises**: Global library of exercises (e.g., "Bench Press") with video URLs and muscle groups.
+*   **Diets**: Nutrition logs tracking calories, protein, carbs, and fats.
+*   **Sleep/Water**: Daily vital logs.
+
+### 3.3 Business & Operations
+*   **Sessions**: Calendar appointments for PT sessions (In-Person/Video), linked to Trainers and Users.
+*   **Payouts**: Trainer withdrawal requests and status (Pending/Processed).
+*   **Reviews**: Client feedback ratings (1-5 stars) and comments.
+*   **Notifications**: System alerts for sessions, payments, and reminders.
+
+---
+
+## 4. Comprehensive Feature Specification
+
+### 4.1 Client Portal Features
+The Client Portal is the user-facing application focused on engagement and tracking.
+*   **Dashboard Widget**: A consolidated view of "Today's Progress" (Calories, Water, Sleep) and "Upcoming Sessions".
+*   **AI Coach**: An intelligent rule-based engine that generates weekly workout plans based on the user's specific injuries (e.g., "Avoid Knees") and equipment availability.
+*   **Adaptive Training**: The "Log Workout" feature asks user feedback ("Too Easy", "Too Hard") and automatically adjusts weights for the next session.
+*   **Gamification**: Users earn "Badges" (e.g., "Early Bird", "Hydration Hero") and maintain "Streaks" for daily logins.
+*   **Wearable Hub**: A simulation interface to connect mock devices (Fitbit, Apple Watch) and sync step counts.
+*   **Premium Upgrades**: Integrated **Stripe Checkout** allows users to upgrade to "Pro" tiers for advanced analytics.
+
+### 4.2 Trainer Portal Features
+The Trainer Portal is a CRM (Customer Relationship Management) tool for fitness professionals.
+*   **Client 360 View**: Trainers can see a client's full history, including missed workouts and dietary adherence.
+*   **Program Builder**: A drag-and-drop style interface to build complex weekly schedules, explicitly marking "Rest Days" and "Active Recovery".
+*   **Calendar & Scheduling**: A full booking system where trainers define availability, and clients (or trainers) book slots.
+*   **Financial Dashboard**:
+    *   **Revenue Charts**: Visual breakdown of monthly income.
+    *   **Transaction History**: Detailed log of every client payment.
+    *   **Payout Request**: Automated system to request bank transfers.
+*   **PDF Exports**: One-click generation of client progress reports for offline sharing.
+
+### 4.3 Admin Portal Features
+The Admin Portal is the control center for system health and safety.
+*   **User Management**: Ability to "Block" or "Suspend" abusive Users or Trainers.
+*   **Content Moderation**: Review and approve public exercise submissions or community posts.
+*   **Global Push Notifications**: Send system-wide alerts (e.g., "Maintenance at 2 AM") to all users relative to their role.
+*   **Support Ticket System**: A helpdesk interface to resolve user inquiries.
+
+---
+
+## 5. API Documentation (Key Endpoints)
+
+### 5.1 Authentication (`/api/auth`)
+*   `POST /register`: Register a new Client.
+*   `POST /login`: Authenticate and receive a JWT.
+*   `POST /trainer/register`: Register a new Trainer application.
+
+### 5.2 Fitness Tracker (`/api/tracker`)
+*   `GET /dashboard`: Aggregate daily stats.
+*   `POST /workouts`: Log a completed workout session.
+*   `GET /history`: Retrieve past logs for charts.
+
+### 5.3 Finance & Commerce (`/api/finance`)
+*   `GET /stats`: (Trainer Only) View total earnings and active subscribers.
+*   `POST /request-payout`: (Trainer Only) Initiate a fund withdrawal.
+*   `POST /webhook`: Stripe webhook handler for payment success events.
+
+### 5.4 Social & Reviews (`/api/reviews`)
+*   `POST /`: (Client Only) Submit a star rating for a Trainer.
+*   `GET /my-reviews`: (Trainer Only) Fetch all received feedback.
+
+---
+
+## 6. Installation & Configuration Guide
+
+### 6.1 Prerequisites
+Ensure your development environment meets the following requirements:
+*   **Node.js**: v18.0.0 or higher.
+*   **MongoDB**: v6.0+ (Local Community Edition or Atlas Cloud).
+*   **Stripe Account**: For testing payments in "Test Mode".
+
+### 6.2 Environment Variables (.env)
+Create a `.env` file in the `backend/` directory with the following keys:
+
+| Variable | Description | Example Value |
+| :--- | :--- | :--- |
+| `PORT` | API Server Port | `5000` |
+| `MONGO_URI` | Database Connection String | `mongodb://localhost:27017/fitness_db` |
+| `JWT_SECRET` | Secret for signing Tokens | `my_super_secret_key_123` |
+| `STRIPE_SECRET_KEY` | Stripe Secret Key (sk_test_...) | `sk_test_51Mz...` |
+| `EMAIL_USER` | SMTP Username | `admin@fitness.com` |
+| `EMAIL_PASS` | SMTP Password | `app_specific_password` |
+
+### 6.3 Deployment Steps (Local)
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/your-repo/fitness-tracker.git
+    cd fitness-tracker
+    ```
+
+2.  **Install & Run Backend**:
     ```bash
     cd backend
-    ```
-2.  Install dependencies:
-    ```bash
     npm install
-    ```
-3.  **Environment Variables**: Create a `.env` file in `backend/`:
-    ```env
-    PORT=5000
-    MONGO_URI=MongoDB_URL
-    JWT_SECRET=JWT_SECRET
-    ```
-4.  Start the server:
-    ```bash
-    nodemon ./server.js
-    ```
-
-### Step 2: Frontend-User Setup
-1.  Open a new terminal.
-2.  Navigate to the folder:
-    ```bash
-    cd frontend-user
-    ```
-3.  Install dependencies:
-    ```bash
-    npm install
-    ```
-4.  Start the app:
-    ```bash
     npm run dev
     ```
+    *Server will start at `http://localhost:5000`*
 
-### Step 3: Frontend-Admin Setup
-1.  Open a new terminal.
-2.  Navigate to the folder:
-    ```bash
-    cd frontend-admin
-    ```
-3.  Install dependencies:
-    ```bash
-    npm install
-    ```
-4.  Start the app:
-    ```bash
-    npm run dev
-    ```
-
----
-
-## � API Documentation Overview
-
-The backend exposes a RESTful API. For full details, see the `backend/README.md`.
-
-*   `POST /api/auth/register` - Create a new user.
-*   `POST /api/auth/login` - Authenticate user & get Token.
-*   `GET /api/tracker/dashboard` - Get user stats.
-*   `POST /api/tracker/workouts` - Log a workout.
+3.  **Install & Run Frontends**:
+    *   **User App**:
+        ```bash
+        cd frontend-user
+        npm install
+        npm run dev
+        ```
+    *   **Trainer App**:
+        ```bash
+        cd frontend-trainer
+        (repeat install & dev)
+        ```
+    *   **Admin App**:
+        ```bash
+        cd frontend-admin
+        (repeat install & dev)
+        ```
 
 ---
 
-## 🤝 Contribution Guidelines
+## 7. Troubleshooting & FAQ
 
-1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+**Q: I get a "MongoDB connection error".**
+A: Ensure your MongoDB service is running locally (`mongod`), or check if your IP is whitelisted in MongoDB Atlas.
+
+**Q: Images are not loading.**
+A: The system uses local file storage. Ensure the `/uploads` directory exists in the `backend` folder and contains the necessary assets.
+
+**Q: Stripe payments fail.**
+A: Verify you are using valid "Test Cards" (e.g., 4242 4242...) and that your `STRIPE_SECRET_KEY` is correct in the `.env` file.
 
 ---
-**Developed by Mohammed Ansari**
+
+## 8. License & Copyright
+This project is licensed under the **ISC License**. Use, modification, and distribution are permitted.
+
+**© 2026 Developed by Mohammed Ansari.**

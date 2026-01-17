@@ -8,7 +8,7 @@ const Trainers = () => {
     const fetchTrainers = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/trainers', {
+            const res = await axios.get('http://localhost:5000/api/admin/trainers', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setTrainers(res.data);
@@ -25,7 +25,7 @@ const Trainers = () => {
         if (!window.confirm('Approve this trainer?')) return;
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/trainers/${id}/approve`, {}, {
+            await axios.put(`http://localhost:5000/api/admin/trainers/${id}/approve`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchTrainers();
@@ -39,7 +39,7 @@ const Trainers = () => {
         if (!window.confirm(`Are you sure you want to ${action} this trainer?`)) return;
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/trainers/${trainer._id}/suspend`, {}, {
+            await axios.put(`http://localhost:5000/api/admin/trainers/${trainer._id}/suspend`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchTrainers();
@@ -71,8 +71,8 @@ const Trainers = () => {
                                 <td className="px-6 py-4 text-gray-400">{trainer.specialization}</td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${trainer.isSuspended ? 'bg-red-500/10 text-red-500' :
-                                            !trainer.isApproved ? 'bg-yellow-500/10 text-yellow-500' :
-                                                'bg-green-500/10 text-green-500'
+                                        !trainer.isApproved ? 'bg-yellow-500/10 text-yellow-500' :
+                                            'bg-green-500/10 text-green-500'
                                         }`}>
                                         {trainer.isSuspended ? 'Suspended' : !trainer.isApproved ? 'Pending' : 'Active'}
                                     </span>
@@ -91,8 +91,8 @@ const Trainers = () => {
                                         <button
                                             onClick={() => handleSuspend(trainer)}
                                             className={`p-2 rounded-lg transition-colors ${trainer.isSuspended
-                                                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
-                                                    : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
+                                                ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
+                                                : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
                                                 }`}
                                             title={trainer.isSuspended ? "Unsuspend" : "Suspend"}
                                         >

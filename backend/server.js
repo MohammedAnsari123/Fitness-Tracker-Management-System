@@ -55,6 +55,11 @@ io.on("connection", (socket) => {
     });
 });
 
+app.use('/api/payments', require('./routes/paymentRoutes'));
+
+// For Stripe webhook (optional, but good practice)
+// app.post('/webhook', express.raw({type: 'application/json'}), require('./controllers/paymentController').webhook);
+
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -65,7 +70,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/tracker', require('./routes/trackerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-app.use('/api/payments', require('./routes/paymentRoutes'));
+
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/admin/content', require('./routes/adminContentRoutes'));
 app.use('/api/challenges', require('./routes/challengeRoutes'));
@@ -77,6 +82,9 @@ app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/wearables', require('./routes/wearableRoutes'));
 app.use('/api/support', require('./routes/supportRoutes'));
+app.use('/api/sessions', require('./routes/sessionRoutes'));
+app.use('/api/finance', require('./routes/financeRoutes'));
+app.use('/api/reviews', require('./routes/reviewRoutes'));
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 

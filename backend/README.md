@@ -1,189 +1,117 @@
-# 🛠️ Backend Documentation - Fitness Tracker API
+# 🔌 Fitness Tracker API (Backend)
 
-This directory contains the server-side application logic, database models, and API endpoints for the Fitness Tracker system.
+The powerhouse behind the Fitness Tracker Management System. This RESTful API handles authentication, data persistence, payment processing, real-time communication, and automated scheduling.
 
-## 📋 Table of Contents
-1.  [Overview](#overview)
-2.  [Dependencies](#dependencies)
-3.  [Environment Variables](#environment-variables)
-4.  [Folder Structure Details](#folder-structure-details)
-5.  [API Reference](#api-reference)
+## 🛠 Tech Stack
 
----
-
-## Overview
-
-The backend is built with **Node.js** and **Express.js**. It communicates with a **MongoDB** database via **Mongoose** to store and retrieve data. It handles:
-*   User Authentication & Authorization (JWT)
-*   Data validation
-*   Complex querying for statistics and history
-*   File uploading logic (via Multer)
+*   **Runtime**: [Node.js](https://nodejs.org/)
+*   **Framework**: [Express.js](https://expressjs.com/)
+*   **Database**: [MongoDB](https://www.mongodb.com/) (Mongoose ODM)
+*   **Authentication**: JWT (JSON Web Tokens) & [bcryptjs](https://www.npmjs.com/package/bcryptjs)
+*   **Payments**: [Stripe API](https://stripe.com/docs/api)
+*   **Real-time**: [Socket.io](https://socket.io/)
+*   **Email**: [Nodemailer](https://nodemailer.com/)
+*   **Scheduling**: [node-cron](https://www.npmjs.com/package/node-cron)
+*   **File Uploads**: [Multer](https://www.npmjs.com/package/multer)
 
 ---
 
-## Dependencies
+## 📂 Directory Structure
 
-Key libraries used in this project:
-
-*   `express`: The web framework.
-*   `mongoose`: MongoDB object modeling.
-*   `dotenv`: Loading environment variables.
-*   `cors`: Handling Cross-Origin Resource Sharing.
-*   `bcryptjs`: Password hashing.
-*   `jsonwebtoken` (JWT): Generating auth tokens.
-*   `multer`: Handling `multipart/form-data` (file uploads).
-*   `nodemon` (Dev): Auto-restarting server during development.
+```bash
+backend/
+├── config/
+│   └── db.js              # MongoDB Connection Logic
+├── controllers/           # Business Logic for Routes
+│   ├── authController.js  # Login/Register
+│   ├── trainerController.js
+│   ├── financeController.js
+│   └── ...
+├── middleware/            # Custom Middleware
+│   ├── authMiddleware.js  # Protect Routes (JWT verify)
+│   ├── adminMiddleware.js # Admin role check
+│   └── errorMiddleware.js
+├── models/                # Mongoose Schemas
+│   ├── User.js
+│   ├── Session.js
+│   ├── Payout.js
+│   └── ...
+├── routes/                # API Endpoints
+│   ├── authRoutes.js
+│   ├── sessionRoutes.js
+│   ├── paymentRoutes.js
+│   └── ...
+├── uploads/               # Local storage for images
+├── utils/                 # Helper functions (Email, Formats)
+└── server.js              # Application Entry Point
+```
 
 ---
 
-## Environment Variables
+## 🔑 Environment Variables
 
-The application requires a `.env` file in the `backend` root.
+Create a `.env` file in the root of this directory:
 
 ```env
 # Server Configuration
 PORT=5000
+NODE_ENV=development
 
-# Database Configuration
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fitness_tracker
+# Database
+MONGO_URI=mongodb://localhost:27017/fitness_tracker
 
 # Security
-JWT_SECRET=super_secure_random_string_here
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRE=30d
+
+# Stripe Payments
+STRIPE_SECRET_KEY=sk_test_...
+
+# Email Service (SMTP)
+EMAIL_SERVICE=gmail
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_specific_password
 ```
 
 ---
 
-## Folder Structure Details
+## 📡 API Endpoints Overview
 
-*   **`config/`**: Contains `db.js` which handles the connection to MongoDB.
-*   **`models/`**: Defines the data structure (Schema) for the application.
-    *   `User.js`: User profile, password, email.
-    *   `Workout.js`: Exercises, sets, reps, user reference.
-    *   `Diet.js`: Meals logged by users.
-    *   `Challenge.js`: Admin-created challenges.
-*   **`controllers/`**: The logic layer. Each function here responds to a route.
-    *   `authController.js`: Registration, Login.
-    *   `trackerController.js`: CRUD for workouts, diet, etc.
-    *   `adminController.js`: System wide stats and user management.
-*   **`middleware/`**: Functions that run during the request cycle.
-    *   `authMiddleware.js`: Verifies the JWT token and adds `req.user`.
-    *   `errorMiddleware.js`: Centralized error handling.
-*   **`routes/`**: Associates URLs (endpoints) with Controller functions.
+### Authentication
+*   `POST /api/auth/register` - Register a new User.
+*   `POST /api/auth/login` - Login User/Admin.
+*   `POST /api/auth/trainer/login` - Login Trainer.
 
----
+### User Management
+*   `GET /api/users/profile` - Get current user profile.
+*   `PUT /api/users/profile` - Update profile (bio, weight, etc).
+*   `POST /api/users/upload` - Upload profile picture.
 
-## 🗄️ Database Schema
+### Fitness Tracking
+*   `POST /api/tracker/workouts` - Log a workout session.
+*   `GET /api/tracker/dashboard` - Get daily stats (Calories, Water).
+*   `POST /api/tracker/water` - Add water intake.
 
-The following Entity-Relationship diagram illustrates the core data models and their relationships:
+### Trainer & Sessions
+*   `GET /api/sessions/my-sessions` - Get scheduled sessions (User/Trainer).
+*   `POST /api/sessions` - Book a new session.
+*   `GET /api/reviews/my-reviews` - Get trainer reviews.
 
-```mermaid
-classDiagram
-    class User {
-        +ObjectId _id
-        +String name
-        +String email
-        +String role
-        +ObjectId trainer
-        +List~ObjectId~ friends
-    }
-    class Trainer {
-        +ObjectId _id
-        +String name
-        +String specialization
-        +List~ObjectId~ clients
-        +List~ObjectId~ programs
-    }
-    class Workout {
-        +ObjectId _id
-        +ObjectId user
-        +Date date
-        +List exercises
-    }
-    class Program {
-        +ObjectId _id
-        +ObjectId trainer
-        +ObjectId client
-        +List weeks
-    }
-    class Diet {
-        +ObjectId _id
-        +ObjectId user
-        +Date date
-        +List meals
-    }
-
-    User "1" --> "0..*" Workout : has
-    User "1" --> "0..*" Diet : has
-    Trainer "1" --> "0..*" User : manages
-    Trainer "1" --> "0..*" Program : creates
-    Program "1" --> "1" User : assigned_to
-```
+### Finance (Trainer)
+*   `GET /api/finance/stats` - Earnings overview.
+*   `POST /api/finance/request-payout` - Withdraw funds.
 
 ---
 
-## 📡 API Reference
+## ⚡ Deployment
 
-### 🔐 Authentication (`/api/auth`)
+### Local Development
+1.  Install dependencies: `npm install`
+2.  Run with Nodemon: `npm run dev`
 
-| Method | Endpoint    | Description               | Protected |
-| :----- | :---------- | :------------------------ | :-------- |
-| POST   | `/register` | Register a new user       | No        |
-| POST   | `/login`    | Login and receive Token   | No        |
-| GET    | `/me`       | Get current user details  | Yes       |
-
-### 🏋️ Tracker (`/api/tracker`)
-
-| Method | Endpoint     | Description               | Protected |
-| :----- | :----------- | :------------------------ | :-------- |
-| GET    | `/dashboard` | Get daily stats summary   | Yes       |
-| GET    | `/workouts`  | Get user's workout log    | Yes       |
-| POST   | `/workouts`  | Log a new workout         | Yes       |
-| POST   | `/diet`      | Log a meal                | Yes       |
-| POST   | `/water`     | Log water intake          | Yes       |
-| GET    | `/history`   | Get full activity history | Yes       |
-
-### 💬 Chat (`/api/chat`)
-
-| Method | Endpoint         | Description               | Protected |
-| :----- | :--------------- | :------------------------ | :-------- |
-| POST   | `/send`          | Send a message            | Yes       |
-| GET    | `/:otherId`      | Get chat history          | Yes       |
-| GET    | `/conversations` | Get active conversations  | Yes       |
-
-### 👥 Social (`/api/social`)
-
-| Method | Endpoint         | Description               | Protected |
-| :----- | :--------------- | :------------------------ | :-------- |
-| POST   | `/follow/:id`    | Follow a user             | Yes       |
-| GET    | `/feed`          | Get activity feed         | Yes       |
-| GET    | `/leaderboard`   | Get user rankings         | Yes       |
-
-### 🏋️‍♂️ Trainer (`/api/trainer`)
-
-| Method | Endpoint         | Description               | Role      |
-| :----- | :--------------- | :------------------------ | :-------- |
-| GET    | `/clients`       | Get assigned clients      | Trainer   |
-| POST   | `/program`       | Assign a program          | Trainer   |
-| POST   | `/invite`        | Invite a new client       | Trainer   |
-
-### 🛡️ Admin (`/api/admin`)
-
-*Requires Admin Privileges*
-
-| Method | Endpoint          | Description               |
-| :----- | :---------------- | :------------------------ |
-| GET    | `/stats`          | Global system stats       |
-| GET    | `/users`          | List all users            |
-| POST   | `/content/create` | Create exercise/food item |
+### Production
+1.  Set `NODE_ENV=production`.
+2.  Start server: `npm start`
 
 ---
-
-## Running Locally
-
-```bash
-# Install dependencies
-npm install
-
-# Run in development mode (with nodemon)
-npm run dev
-```
+**Developed by Mohammed Ansari**

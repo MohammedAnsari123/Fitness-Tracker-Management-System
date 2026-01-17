@@ -13,7 +13,7 @@ const ClientProgress = () => {
         const fetchProgress = async () => {
             const token = localStorage.getItem('trainerToken');
             try {
-                const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients/${id}/progress`, {
+                const res = await axios.get(`http://localhost:5000/api/trainer/clients/${id}/progress`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setData(res.data);
@@ -118,8 +118,8 @@ const ClientProgress = () => {
                                 <div className="flex items-center gap-4">
                                     {workout.rating && (
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${workout.rating === 'Too Easy' ? 'bg-green-900/30 text-green-400' :
-                                                workout.rating === 'Too Hard' ? 'bg-red-900/30 text-red-400' :
-                                                    'bg-blue-900/30 text-blue-400'
+                                            workout.rating === 'Too Hard' ? 'bg-red-900/30 text-red-400' :
+                                                'bg-blue-900/30 text-blue-400'
                                             }`}>
                                             Rated: {workout.rating}
                                         </span>

@@ -24,7 +24,7 @@ const Nutrition = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/foods', formData, config);
+            const res = await axios.post('http://localhost:5000/api/trainer/foods', formData, config);
             setFoods([...foods, res.data]);
             setIsModalOpen(false);
             setFormData({
@@ -47,7 +47,7 @@ const Nutrition = () => {
     useEffect(() => {
         const fetchFoods = async () => {
             try {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/foods', config);
+                const res = await axios.get('http://localhost:5000/api/trainer/foods', config);
                 setFoods(res.data);
                 setLoading(false);
             } catch (err) {

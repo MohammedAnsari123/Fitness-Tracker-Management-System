@@ -16,9 +16,8 @@ import FoodDatabase from './pages/FoodDatabase';
 
 import ChallengeManager from './pages/ChallengeManager';
 import Payments from './pages/Payments';
-import PushNotifications from './pages/PushNotifications';
-import SupportTickets from './pages/SupportTickets';
 import NotificationManager from './pages/NotificationManager';
+import SupportTickets from './pages/SupportTickets';
 
 function App() {
     return (
@@ -38,8 +37,7 @@ function App() {
                         <Route path="foods" element={<FoodDatabase />} />
                         <Route path="challenges" element={<ChallengeManager />} />
                         <Route path="payments" element={<Payments />} />
-                        <Route path="notifications" element={<PushNotifications />} />
-                        <Route path="notifications" element={<PushNotifications />} />
+                        <Route path="notifications" element={<NotificationManager />} />
                         <Route path="support" element={<SupportTickets />} />
                         <Route path="trainers" element={<Trainers />} />
                     </Route>

@@ -1,65 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { UserPlus, UserMinus, Search, Mail, Phone, Calendar, Activity, X } from 'lucide-react';
+import ExportButton from '../components/ExportButton';
 
 const Clients = () => {
-    const navigate = useNavigate();
-    const [clients, setClients] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [newClientEmail, setNewClientEmail] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    // ... existing state ...
 
-    const [selectedClient, setSelectedClient] = useState(null);
+    const exportColumns = [
+        { header: 'Name', key: 'name' },
+        { header: 'Email', key: 'email' },
+        { header: 'Joined', key: 'createdAt' },
+        { header: 'Status', key: 'status' } // Assuming status exists or we can mock it
+    ];
 
-    const token = localStorage.getItem('trainerToken');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-
-    const fetchClients = async () => {
-        try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', config);
-            setClients(res.data);
-            setLoading(false);
-        } catch (err) {
-            console.error("Error fetching clients", err);
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchClients();
-    }, []);
-
-    const handleAddClient = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-        try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', { email: newClientEmail }, config);
-            setSuccess(res.data.message);
-            setNewClientEmail('');
-            setShowAddModal(false);
-            fetchClients();
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to add client');
-        }
-    };
-
-    const handleRemoveClient = async (clientId) => {
-        if (!window.confirm('Are you sure you want to remove this client?')) return;
-        try {
-            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients/${clientId}`, config);
-            setClients(clients.filter(c => c._id !== clientId));
-        } catch (err) {
-            alert(err.response?.data?.message || 'Failed to remove client');
-        }
-    };
-
-    const handleAssignPlan = (clientId) => {
-        navigate('/programs', { state: { clientId } });
-    };
+    // ... existing fetchClients ...
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -68,13 +19,21 @@ const Clients = () => {
                     <h1 className="text-3xl font-bold text-white">My Clients</h1>
                     <p className="text-slate-400 mt-1">Manage your athletes and assign programs.</p>
                 </div>
-                <button
-                    onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                    <UserPlus size={18} />
-                    <span>Add Client</span>
-                </button>
+                <div className="flex gap-3">
+                    <ExportButton
+                        data={clients}
+                        columns={exportColumns}
+                        title="My Client Roster"
+                        filename="clients_list"
+                    />
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                        <UserPlus size={18} />
+                        <span>Add Client</span>
+                    </button>
+                </div>
             </header>
 
             {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl">{error}</div>}

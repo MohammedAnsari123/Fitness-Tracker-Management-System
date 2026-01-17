@@ -68,7 +68,8 @@ const userSchema = mongoose.Schema({
         },
         startDate: { type: Date, default: Date.now },
         endDate: { type: Date },
-        autoRenew: { type: Boolean, default: false }
+        autoRenew: { type: Boolean, default: false },
+        upgradeRequested: { type: Boolean, default: false }
     },
 
     pushToken: { type: String },

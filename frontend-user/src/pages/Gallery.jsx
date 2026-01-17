@@ -11,7 +11,7 @@ const Gallery = () => {
     const fetchPhotos = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/gallery', {
+            const res = await axios.get('http://localhost:5000/api/gallery', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPhotos(res.data);
@@ -39,7 +39,7 @@ const Gallery = () => {
         }
 
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/gallery', data, {
+            await axios.post('http://localhost:5000/api/gallery', data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -58,7 +58,7 @@ const Gallery = () => {
         if (!window.confirm('Delete this photo?')) return;
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/gallery/${id}`, {
+            await axios.delete(`http://localhost:5000/api/gallery/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchPhotos();

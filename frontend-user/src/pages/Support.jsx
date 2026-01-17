@@ -14,7 +14,7 @@ const Support = () => {
 
     const fetchTickets = async () => {
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/support/my', config);
+            const res = await axios.get('http://localhost:5000/api/support/my', config);
             setTickets(res.data);
             setLoading(false);
         } catch (error) {
@@ -30,7 +30,7 @@ const Support = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/support', { subject, description }, config);
+            await axios.post('http://localhost:5000/api/support', { subject, description }, config);
             setSubject('');
             setDescription('');
             setShowForm(false);

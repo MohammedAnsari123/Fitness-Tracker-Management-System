@@ -28,7 +28,7 @@ const Payments = () => {
 
     const fetchPayments = async () => {
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/payments', config);
+            const res = await axios.get('http://localhost:5000/api/payments', config);
             setPayments(res.data);
             setLoading(false);
         } catch (error) {
@@ -39,7 +39,7 @@ const Payments = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', config);
+            const res = await axios.get('http://localhost:5000/api/admin/users', config);
             setUsers(res.data);
         } catch (error) {
             console.error(error);
@@ -49,7 +49,7 @@ const Payments = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/payments', formData, config);
+            const res = await axios.post('http://localhost:5000/api/payments', formData, config);
             setPayments([res.data, ...payments]); // Optimistic update ideally, or re-fetch
             setShowModal(false);
             setFormData({
@@ -141,8 +141,8 @@ const Payments = () => {
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${payment.status === 'Completed' ? 'bg-emerald-900/30 text-emerald-400' :
-                                                    payment.status === 'Pending' ? 'bg-yellow-900/30 text-yellow-400' :
-                                                        'bg-red-900/30 text-red-400'
+                                                payment.status === 'Pending' ? 'bg-yellow-900/30 text-yellow-400' :
+                                                    'bg-red-900/30 text-red-400'
                                                 }`}>
                                                 {payment.status}
                                             </span>

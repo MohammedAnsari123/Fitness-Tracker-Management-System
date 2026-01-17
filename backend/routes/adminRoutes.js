@@ -8,7 +8,6 @@ const {
     assignPlan,
     deletePlan,
     updateUserSubscription,
-    updateUserSubscription,
     toggleBlockUser,
     getAllTrainers,
     approveTrainer,

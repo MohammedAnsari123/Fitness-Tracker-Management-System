@@ -46,6 +46,28 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const getProfile = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            age: user.age,
+            height: user.height,
+            weight: user.weight,
+            healthConditions: user.healthConditions,
+            injuries: user.injuries,
+            subscription: user.subscription,
+            createdAt: user.createdAt
+        });
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+};
+
 const updateGoals = async (req, res) => {
     const user = await User.findById(req.user._id);
 
@@ -76,9 +98,27 @@ const getMyPlans = async (req, res) => {
     }
 };
 
+const requestUpgrade = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.subscription.upgradeRequested = true;
+        await user.save();
+
+        res.json({ message: 'Upgrade request submitted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     updateProfile,
     updateGoals,
     getGoals,
-    getMyPlans
+    updateGoals,
+    getGoals,
+    getMyPlans,
+    getProfile,
+    requestUpgrade
 };

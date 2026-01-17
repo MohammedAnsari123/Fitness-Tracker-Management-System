@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 try {
                     const config = { headers: { Authorization: `Bearer ${token}` } };
-                    const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/auth/me', config);
+                    const res = await axios.get('http://localhost:5000/api/auth/me', config);
                     setAdmin(res.data);
                 } catch (error) {
                     localStorage.removeItem('adminToken');
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/auth/admin/login', { email, password });
+        const res = await axios.post('http://localhost:5000/api/auth/admin/login', { email, password });
         localStorage.setItem('adminToken', res.data.token);
         setAdmin(res.data);
     };

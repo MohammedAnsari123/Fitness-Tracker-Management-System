@@ -30,7 +30,7 @@ const ProgramBuilder = () => {
             // We only have programId here.
 
             // NOTE: I am adding a new route to backend for this: GET /api/trainer/program/:id
-            const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/program/${id}`, config);
+            const res = await axios.get(`http://localhost:5000/api/trainer/program/${id}`, config);
             setProgram(res.data);
             setLoading(false);
         } catch (err) {
@@ -42,7 +42,7 @@ const ProgramBuilder = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/program/${id}`, program, config);
+            await axios.put(`http://localhost:5000/api/trainer/program/${id}`, program, config);
             alert('Program saved successfully!');
             setSaving(false);
         } catch (error) {

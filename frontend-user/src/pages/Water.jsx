@@ -8,7 +8,7 @@ const Water = () => {
 
     const fetchWater = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/water', {
+        const res = await axios.get('http://localhost:5000/api/tracker/water', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setWaterLogs(res.data);
@@ -24,7 +24,7 @@ const Water = () => {
 
         const token = localStorage.getItem('token');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/water',
+            await axios.post('http://localhost:5000/api/tracker/water',
                 { amount: val },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

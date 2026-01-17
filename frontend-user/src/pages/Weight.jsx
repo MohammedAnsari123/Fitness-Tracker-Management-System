@@ -8,7 +8,7 @@ const Weight = () => {
 
     const fetchWeights = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/weight', {
+        const res = await axios.get('http://localhost:5000/api/tracker/weight', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setWeightLogs(res.data);
@@ -22,7 +22,7 @@ const Weight = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/weight',
+            await axios.post('http://localhost:5000/api/tracker/weight',
                 { weight },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

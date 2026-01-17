@@ -1,30 +1,36 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
-import { Activity, Droplets, Moon, Utensils, Zap } from 'lucide-react';
-
+import { Activity, Droplets, Moon, Utensils, Zap, Calendar as CalendarIcon, Video, MapPin } from 'lucide-react';
 import StreakCounter from '../components/Gamification/StreakCounter';
 import BadgeShowcase from '../components/Gamification/BadgeShowcase';
 
 const Dashboard = () => {
     const { user } = useContext(AuthContext);
     const [stats, setStats] = useState(null);
+    const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/dashboard', config);
-                setStats(res.data);
+
+                const [statsRes, sessionsRes] = await Promise.all([
+                    axios.get('http://localhost:5000/api/tracker/dashboard', config),
+                    axios.get('http://localhost:5000/api/sessions/my', config)
+                ]);
+
+                setStats(statsRes.data);
+                setSessions(sessionsRes.data);
             } catch (err) {
                 console.error(err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchStats();
+        fetchData();
     }, []);
 
     if (loading) return <div>Loading dashboard...</div>;
@@ -41,6 +47,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:border-orange-200 transition-all">
                     <div className="flex items-center justify-between mb-4">
@@ -97,8 +104,50 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <BadgeShowcase badges={stats?.gamification?.badges} />
+            {/* Badges & Upcoming Sessions */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <BadgeShowcase badges={stats?.gamification?.badges} />
 
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                    <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <CalendarIcon className="text-primary-500" size={20} />
+                        Upcoming Sessions
+                    </h2>
+                    <div className="space-y-4">
+                        {sessions.length > 0 ? (
+                            sessions.filter(s => s.status === 'Scheduled').map(session => (
+                                <div key={session._id} className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`p-2 rounded-lg ${session.type === 'Video' ? 'bg-purple-100 text-purple-600' : 'bg-green-100 text-green-600'}`}>
+                                            {session.type === 'Video' ? <Video size={18} /> : <MapPin size={18} />}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-slate-800">{session.title}</h4>
+                                            <p className="text-sm text-slate-500">
+                                                {new Date(session.startTime).toLocaleDateString()} at {new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {session.type === 'Video' && session.meetingLink && (
+                                        <a
+                                            href={session.meetingLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3 py-1 bg-primary-600 text-white text-xs font-bold rounded-lg hover:bg-primary-500 transition-colors"
+                                        >
+                                            Join
+                                        </a>
+                                    )}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-slate-400 text-sm italic py-4 text-center">No upcoming sessions scheduled.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Today's Workouts */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                 <h2 className="text-xl font-bold text-slate-900 mb-4">Today's Workouts</h2>
                 <div className="space-y-4">

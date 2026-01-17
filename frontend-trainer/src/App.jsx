@@ -15,6 +15,9 @@ import Templates from './pages/Templates';
 import Profile from './pages/Profile';
 import Chat from './pages/Chat';
 
+import Schedule from './pages/Schedule';
+import Finance from './pages/Finance';
+
 function App() {
   return (
     <Router>
@@ -32,6 +35,8 @@ function App() {
             <Route path="exercises" element={<Exercises />} />
             <Route path="nutrition" element={<Nutrition />} />
             <Route path="templates" element={<Templates />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="finance" element={<Finance />} />
             <Route path="chat" element={<Chat />} />
             <Route path="profile" element={<Profile />} />
           </Route>

@@ -21,7 +21,7 @@ const NotificationManager = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', config);
+            const res = await axios.get('http://localhost:5000/api/admin/users', config);
             setUsers(res.data);
         } catch (error) {
             console.error(error);
@@ -32,7 +32,7 @@ const NotificationManager = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/notifications/send', formData, config);
+            await axios.post('http://localhost:5000/api/notifications/send', formData, config);
             alert(`Notification sent successfully to ${formData.userId === 'ALL' ? 'ALL users' : 'selected user'}!`);
             setFormData({ ...formData, message: '' });
         } catch (error) {
@@ -67,8 +67,8 @@ const NotificationManager = () => {
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userId: 'ALL' })}
                                     className={`p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${formData.userId === 'ALL'
-                                            ? 'bg-emerald-900/30 border-emerald-500 text-emerald-400'
-                                            : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                                        ? 'bg-emerald-900/30 border-emerald-500 text-emerald-400'
+                                        : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
                                         }`}
                                 >
                                     <Users size={20} /> All Users
@@ -77,8 +77,8 @@ const NotificationManager = () => {
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userId: users[0]?._id })} // Default to first if switching
                                     className={`p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${formData.userId !== 'ALL'
-                                            ? 'bg-cyan-900/30 border-cyan-500 text-cyan-400'
-                                            : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                                        ? 'bg-cyan-900/30 border-cyan-500 text-cyan-400'
+                                        : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
                                         }`}
                                 >
                                     <User size={20} /> Specific User
@@ -107,11 +107,11 @@ const NotificationManager = () => {
                                         type="button"
                                         onClick={() => setFormData({ ...formData, type })}
                                         className={`px-4 py-2 rounded-lg text-sm font-bold capitalize transition-all border ${formData.type === type
-                                                ? type === 'error' ? 'bg-red-500 text-white border-red-500'
-                                                    : type === 'warning' ? 'bg-yellow-500 text-black border-yellow-500'
-                                                        : type === 'success' ? 'bg-green-500 text-white border-green-500'
-                                                            : 'bg-blue-500 text-white border-blue-500'
-                                                : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-600'
+                                            ? type === 'error' ? 'bg-red-500 text-white border-red-500'
+                                                : type === 'warning' ? 'bg-yellow-500 text-black border-yellow-500'
+                                                    : type === 'success' ? 'bg-green-500 text-white border-green-500'
+                                                        : 'bg-blue-500 text-white border-blue-500'
+                                            : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-600'
                                             }`}
                                     >
                                         {type}
@@ -160,9 +160,9 @@ const NotificationManager = () => {
                         <h2 className="text-xl font-bold text-white mb-4">Preview</h2>
                         <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 flex gap-4 items-start">
                             <div className={`p-2 rounded-full mt-1 ${formData.type === 'error' ? 'bg-red-500/20 text-red-500'
-                                    : formData.type === 'warning' ? 'bg-yellow-500/20 text-yellow-500'
-                                        : formData.type === 'success' ? 'bg-green-500/20 text-green-500'
-                                            : 'bg-blue-500/20 text-blue-500'
+                                : formData.type === 'warning' ? 'bg-yellow-500/20 text-yellow-500'
+                                    : formData.type === 'success' ? 'bg-green-500/20 text-green-500'
+                                        : 'bg-blue-500/20 text-blue-500'
                                 }`}>
                                 <Bell size={20} />
                             </div>

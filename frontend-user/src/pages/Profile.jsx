@@ -1,205 +1,251 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { User, Save } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
+import { User, Save, Star, MessageSquare, CreditCard, Activity } from 'lucide-react';
 
 const Profile = () => {
-    const { user, login } = useContext(AuthContext);
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        age: '',
-        gender: '',
-        height: '',
-        weight: '',
-        healthConditions: '',
-        injuries: '',
-        password: ''
-    });
+    const { user } = useContext(AuthContext);
+
+    // Form State
+    const [age, setAge] = useState('');
+    const [gender, setGender] = useState('Male');
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
+    const [activityLevel, setActivityLevel] = useState('Sedentary');
+    const [goals, setGoals] = useState('Weight Loss');
+    const [injuries, setInjuries] = useState('');
+    const [equipment, setEquipment] = useState('Gym');
+
+    // UI State
     const [msg, setMsg] = useState('');
-    const [subscription, setSubscription] = useState(null);
+    const [notification, setNotification] = useState('');
+
+    // Review State
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
+    const [reviewMsg, setReviewMsg] = useState('');
 
     useEffect(() => {
-        if (user) {
-            setFormData({
-                name: user.name || '',
-                email: user.email || '',
-                age: user.age || '',
-                gender: user.gender || '',
-                height: user.height || '',
-                weight: user.weight || '',
-                healthConditions: user.healthConditions ? user.healthConditions.join(', ') : '',
-                injuries: user.injuries ? user.injuries.join(', ') : '',
-                password: ''
-            });
-            if (user.subscription) {
-                setSubscription(user.subscription);
-            }
-        }
-    }, [user]);
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const config = { headers: { Authorization: `Bearer ${token}` } };
+                const res = await axios.get('http://localhost:5000/api/users/profile', config);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+                const p = res.data;
+                setAge(p.age || '');
+                setGender(p.gender || 'Male');
+                setHeight(p.height || '');
+                setWeight(p.weight || '');
+                setActivityLevel(p.activityLevel || 'Sedentary');
+                setGoals(p.goals || 'Weight Loss');
+                setInjuries(p.injuries || '');
+                setEquipment(p.equipment || 'Gym');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchProfile();
+    }, [user]); // Re-fetch when user updates
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
         try {
-            const res = await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/profile',
-                formData,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setMsg('Profile updated successfully!');
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            await axios.put('http://localhost:5000/api/users/profile', {
+                age, gender, height, weight, activityLevel, goals, injuries, equipment
+            }, config);
+
+            setMsg('Profile Updated Successfully');
             setTimeout(() => setMsg(''), 3000);
         } catch (error) {
-            console.error(error);
-            setMsg('Error updating profile.');
+            setMsg('Error updating profile');
+        }
+    };
+
+    const handleUpgradeRequest = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('http://localhost:5000/api/users/request-upgrade', {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setNotification('Upgrade request sent successfully! An admin will review it shortly.');
+            setTimeout(() => window.location.reload(), 2000);
+        } catch (error) {
+            setNotification(error.response?.data?.message || 'Error sending request.');
+        }
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('http://localhost:5000/api/reviews', reviewData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setReviewMsg('Review submitted successfully!');
+            setTimeout(() => {
+                setReviewMsg('');
+                setShowReviewModal(false);
+            }, 2000);
+        } catch (error) {
+            setReviewMsg(error.response?.data?.message || 'Error submitting review');
         }
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-slate-900 flex items-center space-x-3">
-                <User className="text-primary-600" size={32} />
-                <span>My Profile</span>
-            </h1>
+        <div className="max-w-2xl mx-auto space-y-8 animate-fade-in">
+            <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-bold text-slate-900 flex items-center space-x-3">
+                    <User className="text-primary-600" size={32} />
+                    <span>My Profile</span>
+                </h1>
+
+                <div className="flex gap-2">
+                    {user?.trainer && (
+                        <button
+                            onClick={() => setShowReviewModal(true)}
+                            className="flex items-center gap-2 text-sm font-medium text-amber-600 bg-amber-50 px-3 py-2 rounded-lg hover:bg-amber-100 transition-colors"
+                        >
+                            <Star size={18} />
+                            Rate Trainer
+                        </button>
+                    )}
+
+                    {user?.subscription?.plan === 'Free' && !user?.subscription?.upgradeRequested && (
+                        <button
+                            onClick={handleUpgradeRequest}
+                            className="flex items-center gap-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-purple-200"
+                        >
+                            <CreditCard size={18} />
+                            Request Upgrade
+                        </button>
+                    )}
+
+                    {user?.subscription?.upgradeRequested && (
+                        <span className="flex items-center gap-2 text-sm font-bold text-orange-600 bg-orange-50 px-4 py-2 rounded-lg border border-orange-100">
+                            <Activity size={18} />
+                            Upgrade Pending
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {notification && <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-700 font-medium text-center">{notification}</div>}
+            {msg && <div className={`p-4 rounded-xl border ${msg.includes('Error') ? 'bg-red-50 border-red-100 text-red-600' : 'bg-green-50 border-green-100 text-green-600'}`}>{msg}</div>}
 
             <div className="bg-white border border-slate-100 p-8 rounded-2xl shadow-xl">
-                {msg && <div className={`p-4 mb-6 rounded-xl border ${msg.includes('Error') ? 'bg-red-50 border-red-100 text-red-600' : 'bg-green-50 border-green-100 text-green-600'}`}>{msg}</div>}
-
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Full Name</label>
-                            <input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Age</label>
+                            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" />
                         </div>
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Email</label>
-                            <input
-                                name="email"
-                                type="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Age</label>
-                            <input
-                                name="age"
-                                type="number"
-                                value={formData.age}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Gender</label>
-                            <select
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            >
-                                <option value="">Select</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Gender</label>
+                            <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Height (cm)</label>
-                            <input
-                                name="height"
-                                type="number"
-                                value={formData.height}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Height (cm)</label>
+                            <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" />
                         </div>
-                        <div>
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Current Weight (kg)</label>
-                            <input
-                                name="weight"
-                                type="number"
-                                value={formData.weight}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Weight (kg)</label>
+                            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" />
                         </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Health Conditions (comma separated)</label>
-                            <input
-                                name="healthConditions"
-                                value={formData.healthConditions}
-                                onChange={handleChange}
-                                placeholder="e.g. Asthma, Diabetes"
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Activity Level</label>
+                            <select value={activityLevel} onChange={(e) => setActivityLevel(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+                                <option>Sedentary</option>
+                                <option>Lightly Active</option>
+                                <option>Moderately Active</option>
+                                <option>Very Active</option>
+                                <option>Extra Active</option>
+                            </select>
                         </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">Injuries (comma separated)</label>
-                            <input
-                                name="injuries"
-                                value={formData.injuries}
-                                onChange={handleChange}
-                                placeholder="e.g. Knee pain, Lower back pain"
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                            />
-                        </div>
-
-                        {subscription && (
-                            <div className="md:col-span-2 bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-100">
-                                <h3 className="font-bold text-purple-900 mb-4 flex items-center gap-2">
-                                    Subscription Status
-                                    <span className={`text-xs px-2 py-1 rounded-full ${subscription.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                        {subscription.status}
-                                    </span>
-                                </h3>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <p className="text-slate-500">Plan</p>
-                                        <p className="font-semibold text-slate-800">{subscription.plan}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500">Auto Renew</p>
-                                        <p className="font-semibold text-slate-800">{subscription.autoRenew ? 'On' : 'Off'}</p>
-                                    </div>
-                                    {subscription.endDate && (
-                                        <div className="col-span-2">
-                                            <p className="text-slate-500">Expires</p>
-                                            <p className="font-semibold text-slate-800">{new Date(subscription.endDate).toLocaleDateString()}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="md:col-span-2">
-                            <label className="block text-slate-600 text-sm mb-2 font-medium">New Password (Optional)</label>
-                            <input
-                                name="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                                placeholder="Leave blank to keep current"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">Main Goal</label>
+                            <select value={goals} onChange={(e) => setGoals(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+                                <option>Weight Loss</option>
+                                <option>Muscle Gain</option>
+                                <option>Maintenance</option>
+                                <option>Endurance</option>
+                            </select>
                         </div>
                     </div>
 
-                    <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-500 text-white py-4 rounded-xl font-bold shadow-lg shadow-primary-500/20 flex items-center justify-center space-x-2 hover:shadow-primary-500/40 transition-all transform hover:-translate-y-0.5">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">Injuries</label>
+                        <input type="text" placeholder="e.g. Lower back pain, left knee..." value={injuries} onChange={(e) => setInjuries(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">Equipment Access</label>
+                        <select value={equipment} onChange={(e) => setEquipment(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+                            <option>Gym</option>
+                            <option>Home Dumbbells</option>
+                            <option>Bodyweight Only</option>
+                            <option>Resistance Bands</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" className="w-full flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg hover:shadow-primary-500/30">
                         <Save size={20} />
-                        <span>Update Profile</span>
+                        <span>Save Profile</span>
                     </button>
                 </form>
             </div>
+
+            {/* Review Modal */}
+            {showReviewModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 animate-scale-in">
+                        <h2 className="text-xl font-bold text-slate-900">Rate Your Trainer</h2>
+                        {reviewMsg && <div className={`text-sm p-2 rounded ${reviewMsg.includes('Error') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{reviewMsg}</div>}
+
+                        <div className="flex justify-center space-x-2 py-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setReviewData({ ...reviewData, rating: star })}
+                                    className={`transition-all hover:scale-110 ${star <= reviewData.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}`}
+                                >
+                                    <Star size={32} />
+                                </button>
+                            ))}
+                        </div>
+
+                        <textarea
+                            placeholder="Share your experience..."
+                            value={reviewData.comment}
+                            onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                            className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none h-32 resize-none"
+                        ></textarea>
+
+                        <div className="flex gap-3 pt-2">
+                            <button
+                                onClick={() => setShowReviewModal(false)}
+                                className="flex-1 py-2 text-slate-600 font-medium hover:bg-slate-50 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleReviewSubmit}
+                                className="flex-1 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/30"
+                            >
+                                Submit Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

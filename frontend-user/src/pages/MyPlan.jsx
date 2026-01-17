@@ -13,7 +13,7 @@ const MyPlan = () => {
         const fetchPlans = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/plans', {
+                const res = await axios.get('http://localhost:5000/api/users/plans', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPlans(res.data);
@@ -48,7 +48,7 @@ const MyPlan = () => {
                 rating: rating
             };
 
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/workout', workoutData, {
+            const res = await axios.post('http://localhost:5000/api/tracker/workout', workoutData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -165,10 +165,10 @@ const MyPlan = () => {
                                     key={r}
                                     onClick={() => setRating(r)}
                                     className={`w-full py-3 rounded-xl border text-sm font-bold transition-all ${rating === r
-                                            ? r === 'Too Easy' ? 'bg-green-100 border-green-300 text-green-700 ring-2 ring-green-500'
-                                                : r === 'Too Hard' ? 'bg-red-100 border-red-300 text-red-700 ring-2 ring-red-500'
-                                                    : 'bg-blue-100 border-blue-300 text-blue-700 ring-2 ring-blue-500'
-                                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                        ? r === 'Too Easy' ? 'bg-green-100 border-green-300 text-green-700 ring-2 ring-green-500'
+                                            : r === 'Too Hard' ? 'bg-red-100 border-red-300 text-red-700 ring-2 ring-red-500'
+                                                : 'bg-blue-100 border-blue-300 text-blue-700 ring-2 ring-blue-500'
+                                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                         }`}
                                 >
                                     {r}

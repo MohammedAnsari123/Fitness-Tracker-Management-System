@@ -1,53 +1,73 @@
-# 🛡️ Fitness Tracker - Admin Portal
+# 🛡️ Admin Portal (Frontend)
 
-The **Admin Portal** is the central control hub for the Fitness Tracker Management System. It provides full oversight of the platform's data, users, and content.
+The command center for the Fitness Tracker Management System. Allows super-users to oversee operations, moderate content, and manage users.
 
-## 🚀 Key Features
+## 🛠 Tech Stack
 
-### 🌍 System Oversight
-*   **Dashboard**: Global statistics (Total Users, Active Workouts, System Health).
-*   **User Management**: View, Edit, and Ban users if necessary.
-*   **Trainer Management**: Verify and manage trainer accounts.
+*   **Framework**: [React.js](https://react.dev/) (v18)
+*   **Build Tool**: [Vite](https://vitejs.dev/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Reports**: jspdf & jspdf-autotable
+*   **Charts**: Recharts
+*   **Icons**: Lucide React
 
-### 🗃️ Content CMS
-*   **Exercise Library Manager**: Create, Update, and Delete system-wide standard exercises.
-*   **Food Database Manager**: maintain the global nutrition database.
-*   **Global Challenges**: Create challenges that appear for all users (e.g., "Summer Shred").
+---
 
-### 📢 Announcements
-*   **System Alerts**: Post updates or maintenance notices.
+## ✨ Features
 
-## 🛠️ Setup
+### 👥 User & Trainer Management
+*   **User Directory**: View, edit, or delete any user account.
+*   **Trainer Approval**: Verify and activate new trainer accounts.
+*   **Ban System**: Suspend users violating platform rules.
+*   **Export Data**: Generate PDFs of user lists.
 
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-2.  **Start Development Server**:
-    ```bash
-    npm run dev
-    ```
-    Typically runs on `http://localhost:5174`.
+### 📚 Content Management (CMS)
+*   **Exercise Library**: Add, edit, or remove exercises from the global database.
+*   **Food Database**: Manage nutritional information.
+*   **Challenges**: Create system-wide community challenges.
+
+### 📢 Communications
+*   **Push Notifications**: Broadcast messages to all users/trainers.
+*   **Support Tickets**: View and resolve helpdesk requests.
+
+### 📈 Analytics & Finance
+*   **System Health**: Dashboard showing active users, growth rates, and retention.
+*   **Financial Oversight**: View all Stripe transactions and subscription statuses.
+
+---
 
 ## 📂 Project Structure
 
-*   `src/pages/`: Admin-specific views.
-*   `src/components/`: Reusable admin components.
-*   `src/context/`: Global state.
-
-## 🧭 Application Flow
-
-```mermaid
-graph LR
-    Login["🔐 Login"] --> Dashboard["📊 System Dashboard"]
-    Dashboard --> Users["👥 User Mgmt"]
-    Dashboard --> Content["🗃️ Content CMS"]
-    Dashboard --> Challenges["🏆 Challenge Mgmt"]
-    
-    Content --> ExerciseDB["🏋️ Exercise DB"]
-    Content --> FoodDB["🍎 Food DB"]
+```bash
+frontend-admin/
+├── src/
+│   ├── components/       # UI Components
+│   │   ├── Layout.jsx
+│   │   ├── StatCard.jsx
+│   │   └── ...
+│   ├── pages/            # Admin Screens
+│   │   ├── UserList.jsx
+│   │   ├── TrainerList.jsx
+│   │   ├── Exercises.jsx
+│   │   └── ...
+│   └── App.jsx
+├── index.html
+└── tailwind.config.js
 ```
 
-## 🎨 Theme
-*   **Primary**: Red / Dark Grey
-*   **Mode**: Mixed/Dark (Authoritative and functional design).
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+*   Node.js v18+
+*   Backend Server running on port 5000
+
+### Installation
+1.  Navigate to directory: `cd frontend-admin`
+2.  Install dependencies: `npm install`
+3.  Start development server: `npm run dev`
+4.  Open `http://localhost:5175`
+
+---
+**Developed by Mohammed Ansari**

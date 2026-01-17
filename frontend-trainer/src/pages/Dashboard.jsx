@@ -16,7 +16,7 @@ const Dashboard = () => {
         const fetchClients = async () => {
             const token = localStorage.getItem('trainerToken');
             try {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', {
+                const res = await axios.get('http://localhost:5000/api/trainer/clients', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setClients(res.data);

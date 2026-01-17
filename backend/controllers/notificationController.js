@@ -39,13 +39,6 @@ const markAllRead = async (req, res) => {
     }
 };
 
-module.exports = {
-    getNotifications,
-    markRead,
-    markAllRead,
-    sendNotification
-};
-
 // @desc    Send manual notification (Admin)
 // @route   POST /api/notifications/send
 // @access  Private/Admin
@@ -79,4 +72,11 @@ const sendNotification = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};
+
+module.exports = {
+    getNotifications,
+    markRead,
+    markAllRead,
+    sendNotification
 };

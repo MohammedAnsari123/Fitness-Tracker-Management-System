@@ -165,7 +165,8 @@ const updateUserSubscription = async (req, res) => {
             status: status || user.subscription.status,
             endDate: endDate || user.subscription.endDate,
             startDate: user.subscription.startDate, // Keep original start date
-            autoRenew: user.subscription.autoRenew // Keep original autoRenew
+            autoRenew: user.subscription.autoRenew, // Keep original autoRenew
+            upgradeRequested: false // Clear request on update
         };
 
         if (endDate) {

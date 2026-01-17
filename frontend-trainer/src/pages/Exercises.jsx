@@ -24,7 +24,7 @@ const Exercises = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/exercises', formData, config);
+            const res = await axios.post('http://localhost:5000/api/trainer/exercises', formData, config);
             setExercises([...exercises, res.data]);
             setIsModalOpen(false);
             setFormData({
@@ -49,7 +49,7 @@ const Exercises = () => {
 
     const fetchExercises = async () => {
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/exercises', config);
+            const res = await axios.get('http://localhost:5000/api/trainer/exercises', config);
             setExercises(res.data);
             setLoading(false);
         } catch (err) {

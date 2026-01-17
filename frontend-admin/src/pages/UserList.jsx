@@ -1,20 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { Eye, Trash2, Ban, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import ExportButton from '../components/ExportButton';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const exportColumns = [
+        { header: 'Name', key: 'name' },
+        { header: 'Email', key: 'email' },
+        { header: 'Joined', key: 'createdAt' },
+        { header: 'Role', key: 'role' },
+        { header: 'Blocked', key: 'isBlocked' }
+    ];
 
     const fetchUsers = async () => {
-        const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', {
+            const token = localStorage.getItem('adminToken');
+            // Assuming API_URL is handled by proxy or full URL
+            const { data } = await axios.get('http://localhost:5000/api/admin/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setUsers(res.data);
+            setUsers(data);
+            setLoading(false);
         } catch (error) {
             console.error(error);
+            setLoading(false);
         }
     };
 
@@ -23,40 +36,47 @@ const UserList = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this user and ALL their data?')) {
-            const token = localStorage.getItem('adminToken');
+        if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${id}`, {
+                const token = localStorage.getItem('adminToken');
+                await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                fetchUsers();
+                setUsers(users.filter(user => user._id !== id));
             } catch (error) {
                 console.error(error);
-                alert('Failed to delete user');
             }
         }
     };
 
     const handleToggleBlock = async (user) => {
-        const action = user.isBlocked ? 'unblock' : 'block';
-        if (window.confirm(`Are you sure you want to ${action} this user?`)) {
+        try {
             const token = localStorage.getItem('adminToken');
-            try {
-                await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${user._id}/block`, {}, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                // Optimistic UI update
-                setUsers(users.map(u => u._id === user._id ? { ...u, isBlocked: !u.isBlocked } : u));
-            } catch (error) {
-                console.error(error);
-                alert(`Failed to ${action} user`);
-            }
+            await axios.put(`http://localhost:5000/api/admin/users/${user._id}/block`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Update UI
+            setUsers(users.map(u =>
+                u._id === user._id ? { ...u, isBlocked: !u.isBlocked } : u
+            ));
+        } catch (error) {
+            console.error(error);
         }
     };
 
+    if (loading) return <div className="text-white p-8">Loading users...</div>;
+
     return (
         <div className="space-y-6 animate-fade-in">
-            <h1 className="text-3xl font-bold text-white">User Management</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-bold text-white">User Management</h1>
+                <ExportButton
+                    data={users}
+                    columns={exportColumns}
+                    title="All Registered Users"
+                    filename="user_registry"
+                />
+            </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
@@ -80,6 +100,11 @@ const UserList = () => {
                                         }`}>
                                         {user.isBlocked ? 'Suspended' : 'Active'}
                                     </span>
+                                    {user.subscription?.upgradeRequested && (
+                                        <span className="ml-2 inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-orange-500/10 text-orange-500">
+                                            Requesting Upgrade
+                                        </span>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex space-x-3">
@@ -93,8 +118,8 @@ const UserList = () => {
                                         <button
                                             onClick={() => handleToggleBlock(user)}
                                             className={`p-2 rounded-lg transition-colors ${user.isBlocked
-                                                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
-                                                    : 'bg-orange-500/10 text-orange-500 hover:bg-orange-500/20'
+                                                ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
+                                                : 'bg-orange-500/10 text-orange-500 hover:bg-orange-500/20'
                                                 }`}
                                             title={user.isBlocked ? "Unblock User" : "Block User"}
                                         >

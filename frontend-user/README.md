@@ -1,60 +1,81 @@
-# 👤 Fitness Tracker - User Portal
+# 👤 User Portal (Frontend)
 
-The **User Portal** is the client-facing application where fitness enthusiasts track their daily progress, interact with their trainer, and engage with the community.
+The client-facing application for the Fitness Tracker System. Designed for users to track their health journey, communicate with trainers, and manage their subscriptions.
 
-## 🚀 Key Features
+## 🛠 Tech Stack
 
-### 📊 Dashboard & Analytics
-*   **Daily Overview**: Immediate view of Calories, Water, and Sleep status.
-*   **Analytics Page**:
-    *   **Volume Chart**: Visualizes workout volume over time.
-    *   **PR Tracker**: Automatically tracks Personal Records for exercises.
-    *   **1RM Calculator**: Estimates One-Rep Max based on recent lifts.
+*   **Framework**: [React.js](https://react.dev/) (v18)
+*   **Build Tool**: [Vite](https://vitejs.dev/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Routing**: React Router DOM
+*   **State Management**: Context API
+*   **HTTP Client**: Axios
+*   **Payments**: @stripe/react-stripe-js
+*   **Visualizations**: Recharts
+*   **Icons**: Lucide React
 
-### 🏋️ Workout & Tracking
-*   **Workout Logger**: Intuitive interface to log Gym sessions.
-*   **Nutrition Logger**: Database-backed food logging with macro calculations.
-*   **Vitals**: Quick-tap logging for Water, Sleep, and Weight.
+---
 
-### 💬 Social & Gamification
-*   **Chat System**: Direct messaging with assigned Trainers.
-*   **Community Feed**: See what friends are achieving.
-*   **Badges**: Dynamic badge system for milestones (e.g., "Early Bird", "Heavy Lifter").
-*   **Leaderboards**: Weekly XP rankings.
+## ✨ Features
 
-## 🛠️ Setup
+### 📊 Dashboard
+*   **Daily Overview**: Visual progress bars for Calories, Protein, Water, and Sleep.
+*   **Upcoming Sessions**: Widget showing the next scheduled Video/In-Person session.
+*   **Activity Feed**: Recent workouts and achievements.
 
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-2.  **Start Development Server**:
-    ```bash
-    npm run dev
-    ```
-    Typically runs on `http://localhost:5173`.
+### 💪 Workout Tracker
+*   **Log Workout**: Interface to record sets, reps, and weights.
+*   **AI Recommendations**: "Smart" suggestions based on past performance.
+*   **History**: Calendar view of past activity.
+
+### 🍎 Nutrition & Health
+*   **Food Logger**: Database search for tracking meals.
+*   **Water Tracker**: Simple tap-to-add interface.
+*   **Body Metrics**: Weight and BMI tracking charts.
+
+### 🤝 Social & Profile
+*   **Rate Trainer**: Give star ratings and reviews to assigned trainers.
+*   **Chat**: Real-time messaging implementation.
+*   **Premium**: Stripe integration for upgrading subscription tiers.
+
+---
 
 ## 📂 Project Structure
 
-*   `src/pages/`: Main application views.
-*   `src/components/`: Reusable UI elements (Cards, Charts, Modals).
-*   `src/context/`: Global state (Auth, Theme).
-*   `src/assets/`: Static images and icons.
-
-## 🧭 Application Flow
-
-```mermaid
-graph LR
-    Login["🔐 Login/Register"] --> Dashboard
-    Dashboard["📊 Dashboard"] --> Workout["🏋️ Workout Logger"]
-    Dashboard --> Nutrition["🍎 Nutrition Logger"]
-    Dashboard --> Social["💬 Social Hub"]
-    
-    Workout --> ExerciseLib["📚 Exercise Library"]
-    Social --> Chat["📨 Direct Chat"]
-    Social --> Feed["👥 Community Feed"]
+```bash
+frontend-user/
+├── src/
+│   ├── assets/           # Static Images/Icons
+│   ├── components/       # Reusable UI Components
+│   │   ├── Navbar.jsx
+│   │   ├── PaymentModal.jsx
+│   │   └── ...
+│   ├── context/          # Context Providers
+│   │   └── AuthContext.jsx
+│   ├── pages/            # Page Views
+│   │   ├── Dashboard.jsx
+│   │   ├── Profile.jsx
+│   │   ├── Workouts.jsx
+│   │   └── ...
+│   ├── App.jsx           # Main Router
+│   └── main.jsx          # Entry Point
+├── index.html
+└── tailwind.config.js
 ```
 
-## 🎨 Theme
-*   **Primary**: Calm Blue / Cyan
-*   **Mode**: Light Mode (Optimized for readability during workouts).
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+*   Node.js v18+
+*   Backend Server running on port 5000
+
+### Installation
+1.  Navigate to directory: `cd frontend-user`
+2.  Install dependencies: `npm install`
+3.  Start development server: `npm run dev`
+4.  Open `http://localhost:5173`
+
+---
+**Developed by Mohammed Ansari**

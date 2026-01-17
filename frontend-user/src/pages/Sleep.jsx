@@ -9,7 +9,7 @@ const Sleep = () => {
 
     const fetchSleep = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/sleep', {
+        const res = await axios.get('http://localhost:5000/api/tracker/sleep', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setSleepLogs(res.data);
@@ -23,7 +23,7 @@ const Sleep = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/sleep',
+            await axios.post('http://localhost:5000/api/tracker/sleep',
                 { duration, quality },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

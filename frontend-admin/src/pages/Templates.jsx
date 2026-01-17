@@ -17,7 +17,7 @@ const Templates = () => {
     const fetchTemplates = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/templates', {
+            const res = await axios.get('http://localhost:5000/api/admin/content/templates', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setTemplates(res.data);
@@ -38,7 +38,7 @@ const Templates = () => {
         e.preventDefault();
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/templates', formData, {
+            await axios.post('http://localhost:5000/api/admin/content/templates', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowForm(false);
@@ -53,7 +53,7 @@ const Templates = () => {
         if (!window.confirm('Delete this template?')) return;
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/templates/${id}`, {
+            await axios.delete(`http://localhost:5000/api/admin/content/templates/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchTemplates();

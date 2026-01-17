@@ -22,7 +22,7 @@ const Templates = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/templates', formData, config);
+            const res = await axios.post('http://localhost:5000/api/trainer/templates', formData, config);
             setTemplates([res.data, ...templates]);
             setIsModalOpen(false);
             setFormData({
@@ -44,7 +44,7 @@ const Templates = () => {
     useEffect(() => {
         const fetchTemplates = async () => {
             try {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/templates', config);
+                const res = await axios.get('http://localhost:5000/api/trainer/templates', config);
                 setTemplates(res.data);
                 setLoading(false);
             } catch (err) {

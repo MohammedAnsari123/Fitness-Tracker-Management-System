@@ -11,7 +11,7 @@ const Workouts = () => {
 
     const fetchWorkouts = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/workouts', {
+        const res = await axios.get('http://localhost:5000/api/tracker/workouts', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setWorkouts(res.data);
@@ -35,7 +35,7 @@ const Workouts = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/workouts',
+            await axios.post('http://localhost:5000/api/tracker/workouts',
                 { exercises, duration },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

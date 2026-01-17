@@ -16,7 +16,7 @@ const ExerciseLibrary = () => {
     const fetchExercises = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/exercises', {
+            const res = await axios.get('http://localhost:5000/api/admin/content/exercises', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setExercises(res.data);
@@ -37,7 +37,7 @@ const ExerciseLibrary = () => {
         e.preventDefault();
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/exercises', formData, {
+            await axios.post('http://localhost:5000/api/admin/content/exercises', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowForm(false);
@@ -52,7 +52,7 @@ const ExerciseLibrary = () => {
         if (!window.confirm('Delete this exercise?')) return;
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/content/exercises/${id}`, {
+            await axios.delete(`http://localhost:5000/api/admin/content/exercises/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchExercises();
@@ -150,7 +150,7 @@ const ExerciseLibrary = () => {
                                 <td className="px-6 py-4">{ex.muscleGroup}</td>
                                 <td className="px-6 py-4">
                                     <span className={`px-2 py-1 rounded text-xs ${ex.difficulty === 'Beginner' ? 'bg-green-500/10 text-green-400' :
-                                            ex.difficulty === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
+                                        ex.difficulty === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
                                         }`}>{ex.difficulty}</span>
                                 </td>
                                 <td className="px-6 py-4">

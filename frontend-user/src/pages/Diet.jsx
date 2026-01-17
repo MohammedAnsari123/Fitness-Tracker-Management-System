@@ -9,7 +9,7 @@ const Diet = () => {
 
     const fetchDiet = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/diet', {
+        const res = await axios.get('http://localhost:5000/api/tracker/diet', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setDiets(res.data);
@@ -33,7 +33,7 @@ const Diet = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/diet',
+            await axios.post('http://localhost:5000/api/tracker/diet',
                 { meals },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

@@ -21,7 +21,7 @@ const AIGenerator = () => {
         setLoading(true);
         setSaved(false);
         try {
-            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/ai/generate', preferences, config);
+            const res = await axios.post('http://localhost:5000/api/ai/generate', preferences, config);
             setGeneratedPlan(res.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +35,7 @@ const AIGenerator = () => {
         if (!generatedPlan) return;
         setSaving(true);
         try {
-            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/ai/save', generatedPlan, config);
+            await axios.post('http://localhost:5000/api/ai/save', generatedPlan, config);
             setSaved(true);
             setSaving(false);
             alert('Plan saved to your profile!');
@@ -86,8 +86,8 @@ const AIGenerator = () => {
                                             type="button"
                                             onClick={() => setPreferences({ ...preferences, goal: g })}
                                             className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${preferences.goal === g
-                                                    ? 'bg-purple-50 border-purple-200 text-purple-700'
-                                                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                                ? 'bg-purple-50 border-purple-200 text-purple-700'
+                                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             {g}
@@ -105,8 +105,8 @@ const AIGenerator = () => {
                                             type="button"
                                             onClick={() => setPreferences({ ...preferences, intensity: i })}
                                             className={`flex-1 py-2 rounded-xl border text-sm font-medium transition-all ${preferences.intensity === i
-                                                    ? 'bg-purple-50 border-purple-200 text-purple-700'
-                                                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                                ? 'bg-purple-50 border-purple-200 text-purple-700'
+                                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             {i}

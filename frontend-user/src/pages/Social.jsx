@@ -20,13 +20,13 @@ const Social = () => {
 
         try {
             if (activeTab === 'feed') {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/social/feed', { headers });
+                const res = await axios.get('http://localhost:5000/api/social/feed', { headers });
                 setFeed(res.data);
             } else if (activeTab === 'friends') {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/social/users', { headers });
+                const res = await axios.get('http://localhost:5000/api/social/users', { headers });
                 setUsers(res.data);
             } else if (activeTab === 'leaderboard') {
-                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/social/leaderboard', { headers });
+                const res = await axios.get('http://localhost:5000/api/social/leaderboard', { headers });
                 setLeaderboard(res.data);
             }
         } catch (error) {
@@ -40,9 +40,9 @@ const Social = () => {
         const headers = { Authorization: `Bearer ${token}` };
         try {
             if (isFollowing) {
-                await axios.post(`https://fitness-tracker-management-system-xi0y.onrender.com/api/social/unfollow/${userId}`, {}, { headers });
+                await axios.post(`http://localhost:5000/api/social/unfollow/${userId}`, {}, { headers });
             } else {
-                await axios.post(`https://fitness-tracker-management-system-xi0y.onrender.com/api/social/follow/${userId}`, {}, { headers });
+                await axios.post(`http://localhost:5000/api/social/follow/${userId}`, {}, { headers });
             }
             fetchData();
         } catch (error) {

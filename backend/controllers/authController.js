@@ -10,22 +10,12 @@ const generateToken = (id) => {
     });
 };
 
+const sendEmail = require('../utils/emailUtils');
+
+// ... (existing imports)
+
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Please add all fields' });
-    }
-
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+    // ... existing logic ...
     const user = await User.create({
         name,
         email,
@@ -34,6 +24,18 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+        // Send Welcome Email
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'Welcome to Fitness Tracker!',
+                message: `<h1>Hi ${user.name},</h1><p>Welcome to the best Fitness Tracking app. We are excited to have you on board!</p>`
+            });
+        } catch (error) {
+            console.error('Email send failed:', error);
+            // Don't fail registration just because email failed
+        }
+
         res.status(201).json({
             _id: user.id,
             name: user.name,
