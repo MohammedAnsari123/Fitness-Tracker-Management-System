@@ -13,7 +13,7 @@ const PaymentModal = ({ isOpen, onClose, planType = 'Premium', amount = 999, onS
     useEffect(() => {
         if (isOpen) {
             const token = localStorage.getItem('token');
-            axios.post("http://localhost:5000/api/payment/create-payment-intent", {
+            axios.post("https://fitness-tracker-management-system-xi0y.onrender.com/api/payment/create-payment-intent", {
                 amount: amount,
                 planType: planType
             }, {

@@ -19,7 +19,7 @@ const UserList = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const { data } = await axios.get('http://localhost:5000/api/admin/users', {
+            const { data } = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(data);
@@ -38,7 +38,7 @@ const UserList = () => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
                 const token = localStorage.getItem('adminToken');
-                await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+                await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUsers(users.filter(user => user._id !== id));
@@ -51,7 +51,7 @@ const UserList = () => {
     const handleToggleBlock = async (user) => {
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.put(`http://localhost:5000/api/admin/users/${user._id}/block`, {}, {
+            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users/${user._id}/block`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(users.map(u =>

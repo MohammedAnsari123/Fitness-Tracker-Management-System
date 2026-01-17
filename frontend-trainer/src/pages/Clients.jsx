@@ -18,7 +18,7 @@ const Clients = () => {
     const fetchClients = async () => {
         try {
             const token = localStorage.getItem('trainerToken');
-            const res = await axios.get('http://localhost:5000/api/trainer/clients', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setClients(res.data);
@@ -39,7 +39,7 @@ const Clients = () => {
         setSuccess(null);
         try {
             const token = localStorage.getItem('trainerToken');
-            await axios.post('http://localhost:5000/api/trainer/clients', { email: newClientEmail }, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', { email: newClientEmail }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSuccess('Client added successfully!');
@@ -57,7 +57,7 @@ const Clients = () => {
         if (!window.confirm('Are you sure you want to remove this client?')) return;
         try {
             const token = localStorage.getItem('trainerToken');
-            await axios.delete(`http://localhost:5000/api/trainer/clients/${id}`, {
+            await axios.delete(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setClients(clients.filter(c => c._id !== id));

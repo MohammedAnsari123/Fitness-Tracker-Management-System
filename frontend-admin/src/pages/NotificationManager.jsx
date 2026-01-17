@@ -21,7 +21,7 @@ const NotificationManager = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/users', config);
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/admin/users', config);
             setUsers(res.data);
         } catch (error) {
             console.error(error);
@@ -32,7 +32,7 @@ const NotificationManager = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/notifications/send', formData, config);
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/notifications/send', formData, config);
             alert(`Notification sent successfully to ${formData.userId === 'ALL' ? 'ALL users' : 'selected user'}!`);
             setFormData({ ...formData, message: '' });
         } catch (error) {

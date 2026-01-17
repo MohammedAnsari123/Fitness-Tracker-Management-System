@@ -9,7 +9,7 @@ const Notifications = () => {
     const fetchNotifications = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await axios.get('http://localhost:5000/api/notifications', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/notifications', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(res.data);
@@ -27,7 +27,7 @@ const Notifications = () => {
     const markRead = async (id) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:5000/api/notifications/${id}/read`, {}, {
+            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/notifications/${id}/read`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(notifications.map(n => n._id === id ? { ...n, read: true } : n));
@@ -39,7 +39,7 @@ const Notifications = () => {
     const markAllRead = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.put('http://localhost:5000/api/notifications/read-all', {}, {
+            await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/notifications/read-all', {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotifications(notifications.map(n => ({ ...n, read: true })));

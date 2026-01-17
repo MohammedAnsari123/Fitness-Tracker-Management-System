@@ -4,7 +4,7 @@ import { Send, Search, User, MoreVertical, Phone, Video, MessageSquare } from 'l
 import { io } from 'socket.io-client';
 import AuthContext from '../context/AuthContext';
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://fitness-tracker-management-system-xi0y.onrender.com";
 
 const Chat = () => {
     const { trainer } = useContext(AuthContext);

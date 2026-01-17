@@ -21,7 +21,7 @@ const AIGenerator = () => {
         setLoading(true);
         setSaved(false);
         try {
-            const res = await axios.post('http://localhost:5000/api/ai/generate', preferences, config);
+            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/ai/generate', preferences, config);
             setGeneratedPlan(res.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +35,7 @@ const AIGenerator = () => {
         if (!generatedPlan) return;
         setSaving(true);
         try {
-            await axios.post('http://localhost:5000/api/ai/save', generatedPlan, config);
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/ai/save', generatedPlan, config);
             setSaved(true);
             setSaving(false);
             alert('Plan saved to your profile!');
@@ -125,7 +125,7 @@ const AIGenerator = () => {
                     </div>
                 </div>
 
-\                <div className="md:col-span-2 space-y-6">
+                \                <div className="md:col-span-2 space-y-6">
                     {!generatedPlan && !loading && (
                         <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400">
                             <Sparkles size={48} className="mb-4 opacity-50" />

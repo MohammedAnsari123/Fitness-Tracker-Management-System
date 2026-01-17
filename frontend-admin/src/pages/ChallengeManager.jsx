@@ -16,7 +16,7 @@ const ChallengeManager = () => {
     const fetchChallenges = async () => {
         const token = localStorage.getItem('adminToken');
         try {
-            const res = await axios.get('http://localhost:5000/api/challenges', {
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setChallenges(res.data);
@@ -37,7 +37,7 @@ const ChallengeManager = () => {
         e.preventDefault();
         const token = localStorage.getItem('adminToken');
         try {
-            await axios.post('http://localhost:5000/api/challenges', formData, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/challenges', formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowForm(false);

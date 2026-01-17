@@ -176,7 +176,7 @@ Create a `.env` file in the `backend/` directory with the following keys:
     npm install
     npm run dev
     ```
-    *Server will start at `http://localhost:5000`*
+    *Server will start at `https://fitness-tracker-management-system-xi0y.onrender.com`*
 
 3.  **Install & Run Frontends**:
     *   **User App**:

@@ -42,7 +42,7 @@ const ProgramBuilder = () => {
 
     const fetchProgram = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/trainer/program/${id}`, config);
+            const res = await axios.get(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/program/${id}`, config);
             setProgram(res.data);
             setLoading(false);
         } catch (err) {
@@ -55,7 +55,7 @@ const ProgramBuilder = () => {
         setSaving(true);
         try {
             if (id) {
-                await axios.put(`http://localhost:5000/api/trainer/program/${id}`, program, config);
+                await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/program/${id}`, program, config);
                 alert('Program updated successfully!');
             } else {
                 if (!clientId) {
@@ -63,7 +63,7 @@ const ProgramBuilder = () => {
                     setSaving(false);
                     return;
                 }
-                await axios.post('http://localhost:5000/api/trainer/programs', {
+                await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/programs', {
                     ...program,
                     clientId: clientId
                 }, config);

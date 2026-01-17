@@ -12,7 +12,7 @@ const Goals = () => {
         const fetchGoals = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await axios.get('http://localhost:5000/api/users/goals', {
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/goals', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.data) {
@@ -37,7 +37,7 @@ const Goals = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.put('http://localhost:5000/api/users/goals',
+            await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/goals',
                 goals,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

@@ -27,7 +27,7 @@ const Profile = () => {
         setMsg('');
         try {
             const token = localStorage.getItem('trainerToken');
-            const res = await axios.put('http://localhost:5000/api/trainer/profile', profile, {
+            const res = await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/profile', profile, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProfile({
@@ -48,8 +48,8 @@ const Profile = () => {
         const token = localStorage.getItem('trainerToken');
         try {
             const [profileRes, reviewsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/trainer/profile', { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get('http://localhost:5000/api/reviews/my-reviews', { headers: { Authorization: `Bearer ${token}` } })
+                axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/profile', { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/reviews/my-reviews', { headers: { Authorization: `Bearer ${token}` } })
             ]);
 
             if (profileRes.data) {

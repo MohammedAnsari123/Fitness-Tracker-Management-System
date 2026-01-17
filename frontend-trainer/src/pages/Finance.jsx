@@ -13,7 +13,7 @@ const Finance = () => {
 
     const fetchStats = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/finance/stats', config);
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/finance/stats', config);
             setStats(res.data);
             setLoading(false);
         } catch (error) {
@@ -32,7 +32,7 @@ const Finance = () => {
 
         setRequesting(true);
         try {
-            await axios.post('http://localhost:5000/api/finance/payout', { amount: stats.pendingPayout }, config);
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/finance/payout', { amount: stats.pendingPayout }, config);
             alert('Payout requested successfully!');
             fetchStats();
         } catch (error) {
@@ -197,8 +197,8 @@ const Finance = () => {
                                         <p className="text-xs text-slate-500">{new Date(payout.createdAt).toLocaleDateString()}</p>
                                     </div>
                                     <span className={`px-2 py-1 rounded-md text-xs font-medium border ${payout.status === 'Processed' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                            payout.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
-                                                'bg-red-500/10 text-red-400 border-red-500/20'
+                                        payout.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+                                            'bg-red-500/10 text-red-400 border-red-500/20'
                                         }`}>
                                         {payout.status}
                                     </span>

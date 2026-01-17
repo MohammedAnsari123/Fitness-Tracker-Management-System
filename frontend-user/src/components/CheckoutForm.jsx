@@ -72,7 +72,7 @@ export default function CheckoutForm({ amount, planType, onSuccess }) {
 
             try {
                 const token = localStorage.getItem('token');
-                await axios.post('http://localhost:5000/api/payment', {
+                await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/payment', {
                     amount: amount / 100,
                     method: 'Card (Stripe)',
                     status: 'Completed',

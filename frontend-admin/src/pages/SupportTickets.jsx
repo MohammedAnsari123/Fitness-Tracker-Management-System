@@ -12,7 +12,7 @@ const SupportTickets = () => {
 
     const fetchTickets = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/support', config);
+            const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/support', config);
             setTickets(res.data);
             setLoading(false);
         } catch (error) {
@@ -28,7 +28,7 @@ const SupportTickets = () => {
     const handleResolve = async (id) => {
         if (!window.confirm('Mark this ticket as resolved?')) return;
         try {
-            await axios.put(`http://localhost:5000/api/support/${id}`, { status: 'Resolved' }, config);
+            await axios.put(`https://fitness-tracker-management-system-xi0y.onrender.com/api/support/${id}`, { status: 'Resolved' }, config);
             setTickets(tickets.map(t => t._id === id ? { ...t, status: 'Resolved' } : t));
         } catch (error) {
             alert('Failed to update status');
@@ -50,8 +50,8 @@ const SupportTickets = () => {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === f
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                                    : 'bg-slate-800 text-gray-400 border border-slate-700 hover:bg-slate-700'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                : 'bg-slate-800 text-gray-400 border border-slate-700 hover:bg-slate-700'
                                 }`}
                         >
                             {f}
@@ -88,8 +88,8 @@ const SupportTickets = () => {
                                 <tr key={ticket._id} className="hover:bg-slate-800/50 transition-colors group">
                                     <td className="p-5">
                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${ticket.status === 'Open' ? 'bg-blue-500/10 text-blue-500' :
-                                                ticket.status === 'Resolved' ? 'bg-green-500/10 text-green-500' :
-                                                    'bg-slate-700 text-slate-300'
+                                            ticket.status === 'Resolved' ? 'bg-green-500/10 text-green-500' :
+                                                'bg-slate-700 text-slate-300'
                                             }`}>
                                             {ticket.status === 'Open' ? <Clock size={14} /> : <CheckCircle size={14} />}
                                             {ticket.status}

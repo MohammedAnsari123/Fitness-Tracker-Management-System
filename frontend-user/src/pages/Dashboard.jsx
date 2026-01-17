@@ -18,8 +18,8 @@ const Dashboard = () => {
                 const config = { headers: { Authorization: `Bearer ${token}` } };
 
                 const [statsRes, sessionsRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/tracker/dashboard', config),
-                    axios.get('http://localhost:5000/api/sessions/my', config)
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/dashboard', config),
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/sessions/my', config)
                 ]);
 
                 setStats(statsRes.data);

@@ -30,8 +30,8 @@ const Schedule = () => {
         const fetchData = async () => {
             try {
                 const [sessionsRes, clientsRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/sessions', config),
-                    axios.get('http://localhost:5000/api/trainer/clients', config)
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/sessions', config),
+                    axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/trainer/clients', config)
                 ]);
                 setSessions(sessionsRes.data);
                 setClients(clientsRes.data);
@@ -60,7 +60,7 @@ const Schedule = () => {
                 endTime: endDateTime
             };
 
-            const res = await axios.post('http://localhost:5000/api/sessions', payload, config);
+            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/sessions', payload, config);
             setSessions([...sessions, res.data]);
             setIsModalOpen(false);
             setFormData({
@@ -152,8 +152,8 @@ const Schedule = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${session.status === 'Completed' ? 'border-green-500/30 text-green-400 bg-green-500/10' :
-                                            session.status === 'Cancelled' ? 'border-red-500/30 text-red-400 bg-red-500/10' :
-                                                'border-blue-500/30 text-blue-400 bg-blue-500/10'
+                                        session.status === 'Cancelled' ? 'border-red-500/30 text-red-400 bg-red-500/10' :
+                                            'border-blue-500/30 text-blue-400 bg-blue-500/10'
                                         }`}>
                                         {session.status}
                                     </span>

@@ -25,7 +25,7 @@ const Profile = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('http://localhost:5000/api/users/profile', config);
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/profile', config);
 
                 const p = res.data;
                 setAge(p.age || '');
@@ -49,7 +49,7 @@ const Profile = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            await axios.put('http://localhost:5000/api/users/profile', {
+            await axios.put('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/profile', {
                 age, gender, height, weight, activityLevel, goals, injuries, equipment
             }, config);
 
@@ -63,7 +63,7 @@ const Profile = () => {
     const handleUpgradeRequest = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/api/users/request-upgrade', {}, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/request-upgrade', {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNotification('Upgrade request sent successfully! An admin will review it shortly.');
@@ -77,7 +77,7 @@ const Profile = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:5000/api/reviews', reviewData, {
+            await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/reviews', reviewData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setReviewMsg('Review submitted successfully!');

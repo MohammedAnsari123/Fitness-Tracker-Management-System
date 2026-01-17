@@ -13,7 +13,7 @@ const MyPlan = () => {
         const fetchPlans = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await axios.get('http://localhost:5000/api/users/plans', {
+                const res = await axios.get('https://fitness-tracker-management-system-xi0y.onrender.com/api/users/plans', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPlans(res.data);
@@ -47,7 +47,7 @@ const MyPlan = () => {
                 rating: rating
             };
 
-            const res = await axios.post('http://localhost:5000/api/tracker/workout', workoutData, {
+            const res = await axios.post('https://fitness-tracker-management-system-xi0y.onrender.com/api/tracker/workout', workoutData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
