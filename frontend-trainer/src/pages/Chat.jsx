@@ -4,7 +4,7 @@ import { Send, Search, User, MoreVertical, Phone, Video, MessageSquare } from 'l
 import { io } from 'socket.io-client';
 import AuthContext from '../context/AuthContext';
 
-const ENDPOINT = "http://localhost:5000"; // Local Backend for testing
+const ENDPOINT = "http://localhost:5000";
 
 const Chat = () => {
     const { trainer } = useContext(AuthContext);
@@ -45,7 +45,6 @@ const Chat = () => {
         }
     };
 
-    // Initialize Socket (remains same)
     useEffect(() => {
         if (trainer) {
             socket.current = io(ENDPOINT);
@@ -56,12 +55,10 @@ const Chat = () => {
         };
     }, [trainer]);
 
-    // Listen for Messages (remains same)
     useEffect(() => {
         if (!socket.current) return;
 
         const messageHandler = (newMessageReceived) => {
-            // Check if the message belongs to the currently active chat
             if (activeChat && (
                 newMessageReceived.senderId === activeChat._id ||
                 newMessageReceived.receiverId === activeChat._id
@@ -81,7 +78,6 @@ const Chat = () => {
         fetchConversations();
     }, []);
 
-    // Search Users
     useEffect(() => {
         const search = async () => {
             if (!searchQuery.trim()) {
@@ -106,7 +102,6 @@ const Chat = () => {
         return () => clearTimeout(debounce);
     }, [searchQuery]);
 
-    // Initial fetch when opening a chat
     useEffect(() => {
         if (activeChat) {
             fetchMessages(activeChat._id);
@@ -121,7 +116,6 @@ const Chat = () => {
         e.preventDefault();
         if (!newMessage.trim() || !activeChat) return;
 
-        // Optimistic Update
         const tempMsg = {
             _id: Date.now().toString(),
             senderId: trainer._id,
@@ -153,15 +147,12 @@ const Chat = () => {
 
     const handleSelectChat = (chat) => {
         setActiveChat(chat);
-        setSearchQuery(''); // Clear search on select
+        setSearchQuery('');
         setSearchResults([]);
-        // Check if already in conversations, if not, wait for first message to persist or add manually to UI?
-        // For now, selecting it simply opens the empty chat window. 
     };
 
     return (
         <div className="h-[calc(100vh-2rem)] flex gap-6 animate-in fade-in duration-500">
-            {/* Sidebar / Conversation List */}
             <div className="w-80 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col hidden md:flex">
                 <div className="p-4 border-b border-slate-800">
                     <h2 className="text-xl font-bold text-white mb-4">Messages</h2>
@@ -233,11 +224,9 @@ const Chat = () => {
                 </div>
             </div>
 
-            {/* Chat Area */}
             <div className="flex-1 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col overflow-hidden">
                 {activeChat ? (
                     <>
-                        {/* Header */}
                         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md">
                             <div className="flex items-center space-x-3">
                                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/20">
@@ -258,7 +247,6 @@ const Chat = () => {
                             </div>
                         </div>
 
-                        {/* Messages */}
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 bg-slate-950/30">
                             {messages.length === 0 ? (
                                 <div className="text-center text-slate-500 py-10">
@@ -266,7 +254,7 @@ const Chat = () => {
                                 </div>
                             ) : (
                                 messages.map((msg, idx) => {
-                                    const isMe = msg.senderModel === 'Trainer'; // Or verify ID if needed
+                                    const isMe = msg.senderModel === 'Trainer';
                                     return (
                                         <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-[70%] rounded-2xl p-3 px-4 ${isMe
@@ -284,7 +272,6 @@ const Chat = () => {
                             <div ref={scrollRef} />
                         </div>
 
-                        {/* Input */}
                         <div className="p-4 bg-slate-900 border-t border-slate-800">
                             <form onSubmit={handleSendMessage} className="flex gap-2">
                                 <input

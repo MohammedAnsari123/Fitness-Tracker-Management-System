@@ -5,9 +5,6 @@ import CheckoutForm from './CheckoutForm';
 import { X } from 'lucide-react';
 import axios from 'axios';
 
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-// Replace with your actual publishable key
 const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 const PaymentModal = ({ isOpen, onClose, planType = 'Premium', amount = 999, onSuccess }) => {
@@ -15,10 +12,9 @@ const PaymentModal = ({ isOpen, onClose, planType = 'Premium', amount = 999, onS
 
     useEffect(() => {
         if (isOpen) {
-            // Create PaymentIntent as soon as the modal opens
             const token = localStorage.getItem('token');
             axios.post("http://localhost:5000/api/payment/create-payment-intent", {
-                amount: amount, // cents
+                amount: amount,
                 planType: planType
             }, {
                 headers: { Authorization: `Bearer ${token}` }

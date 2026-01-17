@@ -164,19 +164,17 @@ const updateUserSubscription = async (req, res) => {
             plan: plan || user.subscription.plan,
             status: status || user.subscription.status,
             endDate: endDate || user.subscription.endDate,
-            startDate: user.subscription.startDate, // Keep original start date
-            autoRenew: user.subscription.autoRenew, // Keep original autoRenew
-            upgradeRequested: false // Clear request on update
+            startDate: user.subscription.startDate,
+            autoRenew: user.subscription.autoRenew,
+            upgradeRequested: false
         };
 
         if (endDate) {
-            // Ensure date object if string passed
             user.subscription.endDate = new Date(endDate);
         }
 
         const updatedUser = await user.save();
 
-        // Create Notification
         const Notification = require('../models/Notification');
         await Notification.create({
             user: user._id,

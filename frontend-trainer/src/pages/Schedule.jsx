@@ -26,7 +26,6 @@ const Schedule = () => {
     const token = localStorage.getItem('trainerToken');
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
-    // Fetch Sessions and Clients
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -52,7 +51,6 @@ const Schedule = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            // Combine date + time
             const startDateTime = new Date(`${format(selectedDate, 'yyyy-MM-dd')}T${formData.startTime}`);
             const endDateTime = new Date(`${format(selectedDate, 'yyyy-MM-dd')}T${formData.endTime}`);
 
@@ -63,7 +61,7 @@ const Schedule = () => {
             };
 
             const res = await axios.post('http://localhost:5000/api/sessions', payload, config);
-            setSessions([...sessions, res.data]); // Optimistic add would be complex with sorting, just push
+            setSessions([...sessions, res.data]);
             setIsModalOpen(false);
             setFormData({
                 user: '',
@@ -80,7 +78,6 @@ const Schedule = () => {
         }
     };
 
-    // Filter sessions for selected date
     const dailySessions = sessions.filter(session => {
         const sessionDate = new Date(session.startTime);
         return sessionDate.getDate() === selectedDate.getDate() &&
@@ -104,7 +101,6 @@ const Schedule = () => {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Calendar Column */}
                 <div className="lg:col-span-1">
                     <div className="bg-surface border border-slate-800 p-6 rounded-2xl shadow-xl">
                         <Calendar
@@ -112,7 +108,6 @@ const Schedule = () => {
                             value={selectedDate}
                             className="w-full bg-transparent text-slate-300 border-none rounded-lg"
                             tileClassName={({ date, view }) => {
-                                // Highlight days with sessions
                                 if (view === 'month') {
                                     const hasSession = sessions.some(s => {
                                         const d = new Date(s.startTime);
@@ -127,7 +122,6 @@ const Schedule = () => {
                     </div>
                 </div>
 
-                {/* Sessions List Column */}
                 <div className="lg:col-span-2 space-y-4">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                         <CalendarIcon size={20} className="text-cyan-400" />
@@ -170,7 +164,6 @@ const Schedule = () => {
                 </div>
             </div>
 
-            {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl animate-in zoom-in-95 relative">

@@ -1,14 +1,10 @@
 const Session = require('../models/Session');
 const User = require('../models/User');
 
-// @desc    Create a new session
-// @route   POST /api/sessions
-// @access  Private (Trainer)
 const createSession = async (req, res) => {
     try {
         const { user: userId, title, startTime, endTime, type, meetingLink, notes } = req.body;
 
-        // Simple validation
         if (!userId || !startTime || !endTime) {
             return res.status(400).json({ message: 'Please provide user, start time, and end time' });
         }
@@ -30,9 +26,6 @@ const createSession = async (req, res) => {
     }
 };
 
-// @desc    Get all sessions for logged in trainer
-// @route   GET /api/sessions
-// @access  Private (Trainer)
 const getTrainerSessions = async (req, res) => {
     try {
         const sessions = await Session.find({ trainer: req.trainer._id })
@@ -44,9 +37,6 @@ const getTrainerSessions = async (req, res) => {
     }
 };
 
-// @desc    Get all sessions for logged in user
-// @route   GET /api/sessions/my
-// @access  Private (User)
 const getUserSessions = async (req, res) => {
     try {
         const sessions = await Session.find({ user: req.user._id })
@@ -58,9 +48,6 @@ const getUserSessions = async (req, res) => {
     }
 };
 
-// @desc    Update session status or details
-// @route   PUT /api/sessions/:id
-// @access  Private (Trainer)
 const updateSession = async (req, res) => {
     try {
         const session = await Session.findById(req.params.id);
@@ -69,7 +56,6 @@ const updateSession = async (req, res) => {
             return res.status(404).json({ message: 'Session not found' });
         }
 
-        // Check ownership
         if (session.trainer.toString() !== req.trainer._id.toString()) {
             return res.status(401).json({ message: 'Not authorized' });
         }
@@ -86,9 +72,6 @@ const updateSession = async (req, res) => {
     }
 };
 
-// @desc    Delete session
-// @route   DELETE /api/sessions/:id
-// @access  Private (Trainer)
 const deleteSession = async (req, res) => {
     try {
         const session = await Session.findById(req.params.id);

@@ -12,10 +12,7 @@ const generateToken = (id) => {
 
 const sendEmail = require('../utils/emailUtils');
 
-// ... (existing imports)
-
 const registerUser = async (req, res) => {
-    // ... existing logic ...
     const user = await User.create({
         name,
         email,
@@ -24,7 +21,6 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
-        // Send Welcome Email
         try {
             await sendEmail({
                 email: user.email,
@@ -33,7 +29,6 @@ const registerUser = async (req, res) => {
             });
         } catch (error) {
             console.error('Email send failed:', error);
-            // Don't fail registration just because email failed
         }
 
         res.status(201).json({

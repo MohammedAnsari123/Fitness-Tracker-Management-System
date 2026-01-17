@@ -1,15 +1,48 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-// ... imports
 import { User, Mail, Award, FileText, Save, Camera, Star, MessageSquare } from 'lucide-react';
-// ...
 
 const Profile = () => {
-    // ... profile state
+    const [profile, setProfile] = useState({
+        name: '',
+        email: '',
+        specialization: '',
+        bio: ''
+    });
+    const [loading, setLoading] = useState(true);
+    const [msg, setMsg] = useState('');
     const [reviews, setReviews] = useState([]);
     const [averageRating, setAverageRating] = useState(0);
 
-    // ... useEffect ...
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const handleChange = (e) => {
+        setProfile({ ...profile, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMsg('');
+        try {
+            const token = localStorage.getItem('trainerToken');
+            const res = await axios.put('http://localhost:5000/api/trainer/profile', profile, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setProfile({
+                ...profile,
+                name: res.data.name,
+                specialization: res.data.specialization,
+                bio: res.data.bio
+            });
+            setMsg('Profile updated successfully!');
+            setTimeout(() => setMsg(''), 3000);
+        } catch (error) {
+            console.error(error);
+            setMsg('Error updating profile');
+        }
+    };
 
     const fetchProfile = async () => {
         const token = localStorage.getItem('trainerToken');
@@ -40,8 +73,6 @@ const Profile = () => {
         }
     };
 
-    // ... handleSubmit ...
-
     if (loading) return <div className="text-white text-center mt-20">Loading profile...</div>;
 
     return (
@@ -52,7 +83,6 @@ const Profile = () => {
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column: Stats & Quick Info */}
                 <div className="lg:col-span-1 space-y-6">
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center text-center">
                         <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-lg shadow-cyan-500/20">
@@ -73,7 +103,6 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Reviews List */}
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
                         <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                             <MessageSquare size={18} className="text-purple-400" />
@@ -107,7 +136,6 @@ const Profile = () => {
                     </div>
                 </div>
 
-                {/* Right Column: Edit Profile Form */}
                 <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 h-fit">
                     {msg && (
                         <div className={`p-4 mb-6 rounded-xl border ${msg.includes('Error') ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'}`}>
@@ -116,7 +144,6 @@ const Profile = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* ... existing form inputs ... */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-slate-400 text-sm mb-2 font-medium">Full Name</label>

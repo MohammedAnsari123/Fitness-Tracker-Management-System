@@ -7,7 +7,6 @@ router.get('/', protect, adminOnly, getAllPayments);
 router.post('/', protect, adminOnly, createPayment);
 router.get('/my', protect, getUserPayments);
 
-// Stripe endpoint
 router.post('/create-payment-intent', protect, createPaymentIntent);
 
 module.exports = router;

@@ -31,7 +31,6 @@ const ClientProgress = () => {
 
     const { clientName, workouts, weightLogs } = data;
 
-    // Simple Sparkline Logic for Weight
     const weightTrend = weightLogs.map(w => w.weight);
     const maxWeight = Math.max(...weightTrend, 100);
     const minWeight = Math.min(...weightTrend, 0);
@@ -49,7 +48,6 @@ const ClientProgress = () => {
             </header>
 
             <div className="grid md:grid-cols-2 gap-6">
-                {/* Weight Chart Card */}
                 <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                     <div className="flex items-center gap-2 mb-6">
                         <TrendingUp className="text-cyan-400" />
@@ -78,7 +76,6 @@ const ClientProgress = () => {
                     )}
                 </div>
 
-                {/* Consistency / Stats */}
                 <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                     <div className="flex items-center gap-2 mb-6">
                         <Activity className="text-purple-400" />
@@ -97,7 +94,6 @@ const ClientProgress = () => {
                 </div>
             </div>
 
-            {/* Recent Workouts List */}
             <div className="bg-surface border border-slate-800 rounded-2xl overflow-hidden">
                 <div className="p-6 border-b border-slate-800">
                     <h2 className="text-xl font-bold text-white">Recent Workout Logs</h2>

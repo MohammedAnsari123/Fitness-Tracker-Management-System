@@ -9,7 +9,7 @@ const Wearables = () => {
     const [syncing, setSyncing] = useState(false);
 
     const providers = [
-        { name: 'Apple Health', color: 'bg-black', icon: '/apple-logo.png' }, // Using lucide icon instead of image for now
+        { name: 'Apple Health', color: 'bg-black', icon: '/apple-logo.png' },
         { name: 'Google Fit', color: 'bg-blue-600' },
         { name: 'Fitbit', color: 'bg-teal-600' },
         { name: 'Garmin', color: 'bg-blue-900' }
@@ -19,9 +19,6 @@ const Wearables = () => {
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
     useEffect(() => {
-        // We could fetch user profile here to get connectedDevices, but for now we assume empty or handle via local state after connect
-        // Ideally we should modify getProfile to return this, but let's just make a sub-request or rely on local state for the demo feel
-        // Let's quickly fetch profile to be accurate
         const fetchProfile = async () => {
             try {
                 const res = await axios.get('http://localhost:5000/api/users/profile', config);
@@ -89,7 +86,6 @@ const Wearables = () => {
             </header>
 
             <div className="grid md:grid-cols-2 gap-8">
-                {/* Providers List */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <h2 className="text-xl font-bold text-slate-900 mb-6">Available Providers</h2>
                     <div className="space-y-4">
@@ -130,7 +126,6 @@ const Wearables = () => {
                     </div>
                 </div>
 
-                {/* Sync Status & Data */}
                 <div className="space-y-6">
                     <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl text-white shadow-xl">
                         <div className="flex justify-between items-start mb-6">

@@ -47,7 +47,6 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:border-orange-200 transition-all">
                     <div className="flex items-center justify-between mb-4">
@@ -104,7 +103,6 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Badges & Upcoming Sessions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <BadgeShowcase badges={stats?.gamification?.badges} />
 
@@ -147,7 +145,6 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Today's Workouts */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                 <h2 className="text-xl font-bold text-slate-900 mb-4">Today's Workouts</h2>
                 <div className="space-y-4">

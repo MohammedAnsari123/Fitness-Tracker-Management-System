@@ -8,20 +8,17 @@ const ExportButton = ({ data, columns, title = 'Report', filename = 'report' }) 
     const handleExport = () => {
         const doc = new jsPDF();
 
-        // Add Title
         doc.setFontSize(18);
         doc.text(title, 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
 
-        // Define columns and rows
         const tableColumn = columns.map(col => col.header);
         const tableRows = [];
 
         data.forEach(item => {
             const rowData = columns.map(col => {
-                // Access nested properties if key has dots (e.g. 'user.name')
                 const keys = col.key.split('.');
                 let value = item;
                 keys.forEach(k => {
@@ -38,7 +35,7 @@ const ExportButton = ({ data, columns, title = 'Report', filename = 'report' }) 
             startY: 40,
             theme: 'grid',
             styles: { fontSize: 8, cellPadding: 3 },
-            headStyles: { fillColor: [79, 70, 229] } // Indigo-600 for Admin default
+            headStyles: { fillColor: [79, 70, 229] }
         });
 
         doc.save(`${filename}_${new Date().toISOString().split('T')[0]}.pdf`);

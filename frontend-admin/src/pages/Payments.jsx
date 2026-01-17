@@ -50,7 +50,7 @@ const Payments = () => {
         e.preventDefault();
         try {
             const res = await axios.post('http://localhost:5000/api/payments', formData, config);
-            setPayments([res.data, ...payments]); // Optimistic update ideally, or re-fetch
+            setPayments([res.data, ...payments]);
             setShowModal(false);
             setFormData({
                 userId: '',
@@ -62,7 +62,7 @@ const Payments = () => {
                 date: new Date().toISOString().split('T')[0]
             });
             alert('Payment logged successfully');
-            fetchPayments(); // Re-fetch to get populated user data
+            fetchPayments();
         } catch (error) {
             console.error(error);
             alert('Failed to log payment');
@@ -89,8 +89,6 @@ const Payments = () => {
                     <Plus size={20} /> Log Payment
                 </button>
             </header>
-
-            {/* Stats Cards could go here */}
 
             <div className="bg-surface border border-slate-800 rounded-2xl overflow-hidden">
                 <div className="p-4 border-b border-slate-800 flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-900/50">

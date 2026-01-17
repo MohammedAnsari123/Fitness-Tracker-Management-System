@@ -12,7 +12,6 @@ const updateProfile = async (req, res) => {
         user.height = req.body.height || user.height;
         user.weight = req.body.weight || user.weight;
 
-        // Update health data (ensure array format if sent as string)
         if (req.body.healthConditions) {
             user.healthConditions = Array.isArray(req.body.healthConditions)
                 ? req.body.healthConditions

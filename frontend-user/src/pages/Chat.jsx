@@ -4,7 +4,7 @@ import { Send, Search, Phone, Video, MoreVertical, MessageSquare } from 'lucide-
 import { io } from 'socket.io-client';
 import AuthContext from '../context/AuthContext';
 
-const ENDPOINT = "http://localhost:5000"; // Local Backend for testing
+const ENDPOINT = "http://localhost:5000";
 
 const Chat = () => {
     const { user } = useContext(AuthContext);
@@ -45,7 +45,6 @@ const Chat = () => {
         }
     };
 
-    // Initialize Socket (remains same)
     useEffect(() => {
         if (user) {
             socket.current = io(ENDPOINT);
@@ -56,12 +55,10 @@ const Chat = () => {
         };
     }, [user]);
 
-    // Listen for Messages
     useEffect(() => {
         if (!socket.current) return;
 
         const messageHandler = (newMessageReceived) => {
-            // Check if the message belongs to the currently active chat
             if (activeChat && (
                 newMessageReceived.senderId === activeChat._id ||
                 newMessageReceived.receiverId === activeChat._id
@@ -81,7 +78,6 @@ const Chat = () => {
         fetchConversations();
     }, []);
 
-    // Search Users
     useEffect(() => {
         const search = async () => {
             if (!searchQuery.trim()) {
@@ -106,7 +102,6 @@ const Chat = () => {
         return () => clearTimeout(debounce);
     }, [searchQuery]);
 
-    // Initial fetch when opening a chat
     useEffect(() => {
         if (activeChat) {
             fetchMessages(activeChat._id);
@@ -123,7 +118,6 @@ const Chat = () => {
         e.preventDefault();
         if (!newMessage.trim() || !activeChat) return;
 
-        // Optimistic Update
         const tempMsg = {
             _id: Date.now().toString(),
             senderId: user._id,
@@ -139,7 +133,6 @@ const Chat = () => {
 
         try {
             const token = localStorage.getItem('token');
-            // User chats with Trainer or other User
             await axios.post(`${ENDPOINT}/api/chat/send`, {
                 receiverId: activeChat._id,
                 receiverModel: activeChat.type || 'Trainer',
@@ -148,10 +141,8 @@ const Chat = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // No need to fetchMessages, we already appended.
         } catch (error) {
             console.error("Error sending message", error);
-            // Rollback on error
             setMessages((prev) => prev.filter(m => m._id !== tempMsg._id));
             alert("Failed to send message");
         }
@@ -159,14 +150,13 @@ const Chat = () => {
 
     const handleSelectChat = (chat) => {
         setActiveChat(chat);
-        setSearchQuery(''); // Clear search on select
+        setSearchQuery('');
         setSearchResults([]);
     };
 
     return (
         <div className="p-4 md:p-8 h-screen pt-20 box-border">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full flex overflow-hidden">
-                {/* Sidebar / Conversation List */}
                 <div className={`w-full md:w-80 bg-slate-50 border-r border-slate-200 flex flex-col ${activeChat ? 'hidden md:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-slate-200 bg-white">
                         <h2 className="text-xl font-bold text-slate-800 mb-4">Messages</h2>
@@ -241,11 +231,9 @@ const Chat = () => {
                     </div>
                 </div>
 
-                {/* Chat Area */}
                 <div className={`flex-1 flex flex-col bg-slate-50/50 ${!activeChat ? 'hidden md:flex' : 'flex'}`}>
                     {activeChat ? (
                         <>
-                            {/* Header */}
                             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-white shadow-sm z-10">
                                 <div className="flex items-center space-x-3">
                                     <button
@@ -272,7 +260,6 @@ const Chat = () => {
                                 </div>
                             </div>
 
-                            {/* Messages */}
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
                                 {messages.length === 0 ? (
                                     <div className="text-center text-slate-400 py-10">
@@ -298,7 +285,6 @@ const Chat = () => {
                                 <div ref={scrollRef} />
                             </div>
 
-                            {/* Input */}
                             <div className="p-4 bg-white border-t border-slate-200">
                                 <form onSubmit={handleSendMessage} className="flex gap-2">
                                     <input

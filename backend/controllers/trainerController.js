@@ -70,7 +70,6 @@ const createProgram = async (req, res) => {
             endDate
         });
 
-        // Create Notification
         const Notification = require('../models/Notification');
         await Notification.create({
             user: clientId,
@@ -164,7 +163,6 @@ const getClientProgress = async (req, res) => {
         const clientId = req.params.clientId;
         const client = await User.findById(clientId);
 
-        // Verify authorization
         if (!client || client.trainer.toString() !== req.trainer._id.toString()) {
             return res.status(401).json({ message: 'Not authorized to view this client' });
         }
@@ -172,15 +170,12 @@ const getClientProgress = async (req, res) => {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        // Fetch Stats
         const [workouts, weightLogs] = await Promise.all([
             require('../models/Workout').find({ user: clientId }).sort({ date: -1 }).limit(20),
             require('../models/WeightLog').find({ user: clientId }).sort({ date: 1 })
         ]);
 
-        // Calculate Streak (Simple version)
         let streak = 0;
-        // Logic could be reused from gamification utils if exported, but simple count is fine for now
 
         res.json({
             clientName: client.name,

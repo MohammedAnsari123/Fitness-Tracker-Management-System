@@ -25,7 +25,6 @@ const reviewSchema = mongoose.Schema({
     timestamps: true
 });
 
-// Prevent duplicate reviews from same user to same trainer
 reviewSchema.index({ trainer: 1, user: 1 }, { unique: true });
 
 module.exports = mongoose.model('Review', reviewSchema);

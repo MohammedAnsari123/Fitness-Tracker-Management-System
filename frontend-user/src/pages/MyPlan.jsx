@@ -36,7 +36,6 @@ const MyPlan = () => {
         setIsLogging(true);
         const token = localStorage.getItem('token');
         try {
-            // Construct workout object
             const workoutData = {
                 exercises: selectedDay.exercises.map(ex => ({
                     name: ex.name,
@@ -44,7 +43,7 @@ const MyPlan = () => {
                     reps: ex.reps,
                     weight: ex.weight || 0
                 })),
-                duration: 60, // Default or add input
+                duration: 60,
                 rating: rating
             };
 
@@ -92,7 +91,6 @@ const MyPlan = () => {
                                 {plan.description}
                             </div>
 
-                            {/* Weekly Schedule Renderer */}
                             <div className="mt-6 space-y-4">
                                 <h4 className="font-bold text-slate-800">Weekly Schedule</h4>
                                 {plan.weeks && plan.weeks.map((week, wIndex) => (
@@ -152,7 +150,6 @@ const MyPlan = () => {
                 )}
             </div>
 
-            {/* Log Workout Modal */}
             {selectedDay && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-in zoom-in-95">

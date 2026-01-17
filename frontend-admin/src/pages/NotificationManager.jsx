@@ -8,7 +8,7 @@ const NotificationManager = () => {
         userId: 'ALL',
         type: 'info',
         message: '',
-        isPush: false // Mock toggle for future
+        isPush: false
     });
     const [loading, setLoading] = useState(false);
 
@@ -53,7 +53,6 @@ const NotificationManager = () => {
             </header>
 
             <div className="grid md:grid-cols-2 gap-8">
-                {/* Compose Form */}
                 <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                     <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <Send size={20} className="text-cyan-400" /> Compose Message
@@ -75,7 +74,7 @@ const NotificationManager = () => {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => setFormData({ ...formData, userId: users[0]?._id })} // Default to first if switching
+                                    onClick={() => setFormData({ ...formData, userId: users[0]?._id })}
                                     className={`p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${formData.userId !== 'ALL'
                                         ? 'bg-cyan-900/30 border-cyan-500 text-cyan-400'
                                         : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
@@ -154,7 +153,6 @@ const NotificationManager = () => {
                     </form>
                 </div>
 
-                {/* Preview / History Placeholder */}
                 <div className="space-y-6">
                     <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                         <h2 className="text-xl font-bold text-white mb-4">Preview</h2>

@@ -16,7 +16,7 @@ const payoutSchema = mongoose.Schema({
         default: 'Pending'
     },
     method: {
-        type: String, // e.g., 'Bank Transfer', 'PayPal'
+        type: String,
         default: 'Bank Transfer'
     },
     transactionId: {

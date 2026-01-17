@@ -87,7 +87,6 @@ const UserDetail = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-800">
-                    {/* Health Profile */}
                     <div>
                         <h4 className="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-3">Health Profile</h4>
                         <div className="space-y-3">
@@ -114,7 +113,6 @@ const UserDetail = () => {
                         </div>
                     </div>
 
-                    {/* Subscription Status */}
                     <div>
                         <div className="flex justify-between items-center mb-3">
                             <h4 className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Subscription</h4>

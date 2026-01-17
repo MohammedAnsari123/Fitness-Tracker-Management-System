@@ -10,16 +10,12 @@ if (process.env.STRIPE_SECRET_KEY) {
     console.warn("⚠️ STRIPE_SECRET_KEY is missing. Payment features will be disabled.");
 }
 
-// --- STRIPE LOGIC ---
 const createPaymentIntent = async (req, res) => {
     try {
         if (!stripe) {
             return res.status(500).json({ message: "Stripe is not configured on the server." });
         }
         const { amount, currency = 'usd', planType } = req.body;
-
-        // amount should be in cents
-        // Example: $9.99 -> 999
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
@@ -42,11 +38,6 @@ const createPaymentIntent = async (req, res) => {
     }
 };
 
-// --- MANUAL LOGIC (Restored) ---
-
-// @desc    Get all payments (Admin)
-// @route   GET /api/payment
-// @access  Private/Admin
 const getAllPayments = async (req, res) => {
     try {
         const payments = await Payment.find()
@@ -58,9 +49,6 @@ const getAllPayments = async (req, res) => {
     }
 };
 
-// @desc    Get my payments
-// @route   GET /api/payment/my
-// @access  Private
 const getUserPayments = async (req, res) => {
     try {
         const payments = await Payment.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -70,15 +58,9 @@ const getUserPayments = async (req, res) => {
     }
 };
 
-// @desc    Create manual payment
-// @route   POST /api/payment
-// @access  Private/Admin (or User if allowed manual)
 const createPayment = async (req, res) => {
     try {
         const { user: userId, amount, method, status, notes } = req.body;
-
-        // If created by user (e.g. upload receipt), might default 'user' to req.user._id
-        // But if admin creates for user, 'user' is passed in body
 
         const payment = await Payment.create({
             user: userId || req.user._id,
@@ -88,7 +70,6 @@ const createPayment = async (req, res) => {
             notes
         });
 
-        // Fetch user email for notification
         const payer = await User.findById(payment.user);
         if (payer && payment.status === 'Completed') {
             try {

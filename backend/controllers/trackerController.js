@@ -63,7 +63,6 @@ const addWorkout = async (req, res) => {
 
         const newBadges = await checkBadges(user, totalWorkouts, totalVolume);
 
-        // --- Adaptive Plan Logic ---
         if (req.body.rating && req.body.rating !== 'Good') {
             const Program = require('../models/Program');
             const activeProgram = await Program.findOne({ client: req.user._id, isActive: true });
@@ -77,11 +76,11 @@ const addWorkout = async (req, res) => {
                         day.exercises.forEach(ex => {
                             if (workoutExercises.includes(ex.name.toLowerCase())) {
                                 if (req.body.rating === 'Too Easy') {
-                                    ex.weight = Math.ceil((ex.weight || 0) * 1.05 / 2.5) * 2.5; // +5%, round to 2.5
-                                    if (ex.weight === 0) ex.weight = 2.5; // Start somewhere
+                                    ex.weight = Math.ceil((ex.weight || 0) * 1.05 / 2.5) * 2.5;
+                                    if (ex.weight === 0) ex.weight = 2.5;
                                     planUpdated = true;
                                 } else if (req.body.rating === 'Too Hard' && ex.weight > 0) {
-                                    ex.weight = Math.floor((ex.weight || 0) * 0.90 / 2.5) * 2.5; // -10%
+                                    ex.weight = Math.floor((ex.weight || 0) * 0.90 / 2.5) * 2.5;
                                     planUpdated = true;
                                 }
                             }
@@ -91,7 +90,6 @@ const addWorkout = async (req, res) => {
 
                 if (planUpdated) {
                     await activeProgram.save();
-                    // Optionally notify user via response
                 }
             }
         }

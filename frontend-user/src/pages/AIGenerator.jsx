@@ -58,7 +58,6 @@ const AIGenerator = () => {
             </header>
 
             <div className="grid md:grid-cols-3 gap-8">
-                {/* Configuration Form */}
                 <div className="md:col-span-1">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-4">
                         <h2 className="font-bold text-slate-800 mb-4">Plan Settings</h2>
@@ -126,8 +125,7 @@ const AIGenerator = () => {
                     </div>
                 </div>
 
-                {/* Results Display */}
-                <div className="md:col-span-2 space-y-6">
+\                <div className="md:col-span-2 space-y-6">
                     {!generatedPlan && !loading && (
                         <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400">
                             <Sparkles size={48} className="mb-4 opacity-50" />
@@ -165,7 +163,6 @@ const AIGenerator = () => {
                             </div>
 
                             <div className="space-y-6">
-                                {/* Only showing Week 1 as preview since all weeks are identical in this MVP logic */}
                                 {generatedPlan.weeks[0].days.map((day, idx) => (
                                     <div key={idx} className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
                                         <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">

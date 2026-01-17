@@ -19,7 +19,6 @@ const UserList = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            // Assuming API_URL is handled by proxy or full URL
             const { data } = await axios.get('http://localhost:5000/api/admin/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -55,7 +54,6 @@ const UserList = () => {
             await axios.put(`http://localhost:5000/api/admin/users/${user._id}/block`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // Update UI
             setUsers(users.map(u =>
                 u._id === user._id ? { ...u, isBlocked: !u.isBlocked } : u
             ));

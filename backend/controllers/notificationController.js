@@ -5,7 +5,7 @@ const getNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find({ user: req.user._id })
             .sort({ createdAt: -1 })
-            .limit(50); // Limit to last 50
+            .limit(50);
         res.json(notifications);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -39,13 +39,8 @@ const markAllRead = async (req, res) => {
     }
 };
 
-// @desc    Send manual notification (Admin)
-// @route   POST /api/notifications/send
-// @access  Private/Admin
 const sendNotification = async (req, res) => {
     const { userId, type, message } = req.body;
-
-    // type: 'info', 'success', 'warning', 'error'
 
     try {
         if (userId === 'ALL') {
@@ -58,7 +53,6 @@ const sendNotification = async (req, res) => {
             await Notification.insertMany(notifications);
             res.json({ message: `Notification sent to ${users.length} users` });
         } else {
-            // Validate user
             const user = await User.findById(userId);
             if (!user) return res.status(404).json({ message: 'User not found' });
 

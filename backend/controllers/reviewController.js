@@ -1,9 +1,6 @@
 const Review = require('../models/Review');
 const User = require('../models/User');
 
-// @desc    Add a review for a trainer
-// @route   POST /api/reviews
-// @access  Private (User)
 const addReview = async (req, res) => {
     try {
         const { rating, comment } = req.body;
@@ -37,16 +34,12 @@ const addReview = async (req, res) => {
     }
 };
 
-// @desc    Get reviews for logged in trainer
-// @route   GET /api/reviews/my-reviews
-// @access  Private (Trainer)
 const getTrainerReviews = async (req, res) => {
     try {
         const reviews = await Review.find({ trainer: req.trainer._id })
             .populate('user', 'name image')
             .sort({ createdAt: -1 });
 
-        // Calculate average
         const avg = reviews.length > 0
             ? (reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length).toFixed(1)
             : 0;

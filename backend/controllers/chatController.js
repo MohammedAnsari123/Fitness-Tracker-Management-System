@@ -2,16 +2,12 @@ const Message = require('../models/Message');
 const User = require('../models/User');
 const Trainer = require('../models/Trainer');
 
-// @desc    Send a message
-// @route   POST /api/chat/send
-// @access  Private
 const sendMessage = async (req, res) => {
     try {
         const { receiverId, receiverModel, message } = req.body;
 
         let senderId, senderModel;
 
-        // Determine sender based on who is logged in (User or Trainer)
         if (req.user) {
             senderId = req.user._id;
             senderModel = 'User';
@@ -30,9 +26,7 @@ const sendMessage = async (req, res) => {
             message
         });
 
-        // Real-time Socket Emitting
         const io = req.app.get('io');
-        // Emit to the receiver's room (which uses their ID)
         io.to(receiverId).emit('receive_message', newMessage);
 
         res.status(201).json(newMessage);
@@ -41,9 +35,6 @@ const sendMessage = async (req, res) => {
     }
 };
 
-// @desc    Get messages between current user and another person
-// @route   GET /api/chat/:otherId
-// @access  Private
 const getMessages = async (req, res) => {
     try {
         const { otherId } = req.params;
@@ -57,7 +48,6 @@ const getMessages = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        // Find messages where (sender is ME and receiver is OTHER) OR (sender is OTHER and receiver is ME)
         const messages = await Message.find({
             $or: [
                 { senderId: myId, receiverId: otherId },
@@ -71,9 +61,6 @@ const getMessages = async (req, res) => {
     }
 };
 
-// @desc    Get conversation list (History + Assigned)
-// @route   GET /api/chat/conversations
-// @access  Private
 const getConversations = async (req, res) => {
     try {
         let myId, myModel;
@@ -85,7 +72,6 @@ const getConversations = async (req, res) => {
             myModel = 'Trainer';
         }
 
-        // 1. Get Distinct Interlocutors from Message History
         const messages = await Message.find({
             $or: [{ senderId: myId }, { receiverId: myId }]
         });
@@ -101,17 +87,14 @@ const getConversations = async (req, res) => {
 
         const distinctIdsArray = Array.from(distinctIds);
 
-        // Fetch details for these IDs from both Collections
         const historyUsers = await User.find({ _id: { $in: distinctIdsArray } }).select('name email role');
         const historyTrainers = await Trainer.find({ _id: { $in: distinctIdsArray } }).select('name email role specialization');
 
-        // Combined History List
         let allConversations = [
             ...historyUsers.map(u => ({ ...u.toObject(), type: 'User' })),
             ...historyTrainers.map(t => ({ ...t.toObject(), type: 'Trainer' }))
         ];
 
-        // 2. Add Assigned Connections (even if no messages yet)
         if (myModel === 'Trainer') {
             const clients = await User.find({ trainer: myId }).select('name email role');
             const clientsWithRole = clients.map(c => ({ ...c.toObject(), type: 'User' }));
@@ -119,7 +102,6 @@ const getConversations = async (req, res) => {
         } else {
             const user = await User.findById(myId).populate('trainer', 'name email specialization');
             if (user.trainer) {
-                // Check if already in list to avoid duplicates
                 const exists = allConversations.find(c => c._id.toString() === user.trainer._id.toString());
                 if (!exists) {
                     allConversations.push({ ...user.trainer.toObject(), type: 'Trainer' });
@@ -127,7 +109,6 @@ const getConversations = async (req, res) => {
             }
         }
 
-        // Deduplicate by ID
         const uniqueConversations = Array.from(new Map(allConversations.map(item => [item._id.toString(), item])).values());
 
         res.json(uniqueConversations);
@@ -136,9 +117,6 @@ const getConversations = async (req, res) => {
     }
 };
 
-// @desc    Search for users and trainers
-// @route   GET /api/chat/search?query=...
-// @access  Private
 const searchUsers = async (req, res) => {
     try {
         const { query } = req.query;
@@ -150,7 +128,6 @@ const searchUsers = async (req, res) => {
 
         const regex = new RegExp(query, 'i');
 
-        // Search Users
         const users = await User.find({
             $and: [
                 { _id: { $ne: myId } },
@@ -158,7 +135,6 @@ const searchUsers = async (req, res) => {
             ]
         }).select('name email role');
 
-        // Search Trainers
         const trainers = await Trainer.find({
             $and: [
                 { _id: { $ne: myId } },

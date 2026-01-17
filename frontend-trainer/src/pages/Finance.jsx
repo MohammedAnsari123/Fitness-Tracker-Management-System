@@ -34,7 +34,7 @@ const Finance = () => {
         try {
             await axios.post('http://localhost:5000/api/finance/payout', { amount: stats.pendingPayout }, config);
             alert('Payout requested successfully!');
-            fetchStats(); // Refresh
+            fetchStats();
         } catch (error) {
             console.error(error);
             alert('Failed to request payout');
@@ -43,7 +43,6 @@ const Finance = () => {
         }
     };
 
-    // Mock Chart Data if real history is sparse
     const chartData = [
         { name: 'Jan', income: 1200 },
         { name: 'Feb', income: 1900 },
@@ -72,7 +71,6 @@ const Finance = () => {
                 </button>
             </header>
 
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-surface border border-slate-800 p-6 rounded-2xl relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -119,7 +117,6 @@ const Finance = () => {
                 </div>
             </div>
 
-            {/* Chart */}
             <div className="bg-surface border border-slate-800 p-6 rounded-2xl">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <TrendingUp className="text-cyan-400" size={20} />
@@ -147,7 +144,6 @@ const Finance = () => {
                 </div>
             </div>
 
-            {/* Recent Transactions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-surface border border-slate-800 p-6 rounded-2xl">
                     <h3 className="text-xl font-bold text-white mb-4">Recent Client Payments</h3>

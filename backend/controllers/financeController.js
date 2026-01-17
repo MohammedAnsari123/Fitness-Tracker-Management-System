@@ -2,14 +2,10 @@ const Payment = require('../models/Payment');
 const User = require('../models/User');
 const Payout = require('../models/Payout');
 
-// @desc    Get Trainer Earnings Stats
-// @route   GET /api/finance/stats
-// @access  Private (Trainer)
 const getFinanceStats = async (req, res) => {
     try {
         const trainerId = req.trainer._id;
 
-        // 1. Get all clients assigned to this trainer
         const clients = await User.find({ trainer: trainerId }).select('_id');
         const clientIds = clients.map(c => c._id);
 
@@ -22,28 +18,22 @@ const getFinanceStats = async (req, res) => {
             });
         }
 
-        // 2. Find all payments made by these clients
-        // Assuming 'Completed' is the status for successful payments
         const payments = await Payment.find({
             user: { $in: clientIds },
             status: 'Completed'
         }).populate('user', 'name email').sort({ date: -1 });
 
-        // 3. Calculate Total Earnings (Assuming 70% rev share for trainer)
         const totalRevenue = payments.reduce((acc, curr) => acc + curr.amount, 0);
-        const commissionRate = 0.7; // 70% to trainer
+        const commissionRate = 0.7;
         const totalEarnings = totalRevenue * commissionRate;
 
-        // 4. Calculate Payouts
         const payouts = await Payout.find({ trainer: trainerId });
         const totalWithdrawn = payouts
             .filter(p => p.status === 'Processed')
             .reduce((acc, curr) => acc + curr.amount, 0);
 
-        const pendingPayout = totalEarnings - totalWithdrawn; // Simplified logic
+        const pendingPayout = totalEarnings - totalWithdrawn;
 
-        // 5. Active Subscribers Count (Clients with active non-free plan)
-        // This is an estimation. Better if checking User.subscription.status
         const activeSubscribers = await User.countDocuments({
             trainer: trainerId,
             'subscription.plan': { $ne: 'Free' }
@@ -54,7 +44,7 @@ const getFinanceStats = async (req, res) => {
             pendingPayout: Math.round(pendingPayout * 100) / 100,
             totalRevenue: Math.round(totalRevenue * 100) / 100,
             activeSubscribers,
-            recentTransactions: payments.slice(0, 10), // Last 10
+            recentTransactions: payments.slice(0, 10),
             payoutHistory: payouts
         });
 
@@ -64,15 +54,9 @@ const getFinanceStats = async (req, res) => {
     }
 };
 
-// @desc    Request a Payout
-// @route   POST /api/finance/payout
-// @access  Private (Trainer)
 const requestPayout = async (req, res) => {
     try {
         const { amount, method } = req.body;
-
-        // Basic validation logic... 
-        // Real-world would check against actual available balance calculated above.
 
         const payout = await Payout.create({
             trainer: req.trainer._id,

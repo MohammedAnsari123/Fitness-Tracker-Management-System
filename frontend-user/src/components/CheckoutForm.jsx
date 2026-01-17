@@ -49,14 +49,12 @@ export default function CheckoutForm({ amount, planType, onSuccess }) {
 
         setIsLoading(true);
 
-        // Confirm the payment
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                // Return URL where the user is redirected after the payment
-                return_url: window.location.href, // You might want a dedicated success page
+                return_url: window.location.href,
             },
-            redirect: 'if_required' // Important to avoid full page reload if not needed
+            redirect: 'if_required'
         });
 
         if (error) {
@@ -72,17 +70,15 @@ export default function CheckoutForm({ amount, planType, onSuccess }) {
         if (paymentIntent && paymentIntent.status === 'succeeded') {
             setMessage("Payment Successful!");
 
-            // Record the payment in our backend manually since we don't have webhooks set up locally easily
             try {
                 const token = localStorage.getItem('token');
                 await axios.post('http://localhost:5000/api/payment', {
-                    amount: amount / 100, // Convert back to dollars
+                    amount: amount / 100,
                     method: 'Card (Stripe)',
                     status: 'Completed',
                     notes: `Plan: ${planType}, Transaction: ${paymentIntent.id}`
                 }, { headers: { Authorization: `Bearer ${token}` } });
 
-                // Call success callback to update UI/Subscription
                 onSuccess(paymentIntent);
 
             } catch (err) {

@@ -6,7 +6,6 @@ import { User, Save, Star, MessageSquare, CreditCard, Activity } from 'lucide-re
 const Profile = () => {
     const { user } = useContext(AuthContext);
 
-    // Form State
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('Male');
     const [height, setHeight] = useState('');
@@ -15,12 +14,8 @@ const Profile = () => {
     const [goals, setGoals] = useState('Weight Loss');
     const [injuries, setInjuries] = useState('');
     const [equipment, setEquipment] = useState('Gym');
-
-    // UI State
     const [msg, setMsg] = useState('');
     const [notification, setNotification] = useState('');
-
-    // Review State
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
     const [reviewMsg, setReviewMsg] = useState('');
@@ -46,7 +41,7 @@ const Profile = () => {
             }
         };
         fetchProfile();
-    }, [user]); // Re-fetch when user updates
+    }, [user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -202,7 +197,6 @@ const Profile = () => {
                 </form>
             </div>
 
-            {/* Review Modal */}
             {showReviewModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 animate-scale-in">

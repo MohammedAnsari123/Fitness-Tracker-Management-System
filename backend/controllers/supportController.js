@@ -1,8 +1,5 @@
 const Ticket = require('../models/Ticket');
 
-// @desc    Create a new support ticket
-// @route   POST /api/support
-// @access  Private
 const createTicket = async (req, res) => {
     const { subject, description } = req.body;
     try {
@@ -17,9 +14,6 @@ const createTicket = async (req, res) => {
     }
 };
 
-// @desc    Get current user's tickets
-// @route   GET /api/support/my
-// @access  Private
 const getMyTickets = async (req, res) => {
     try {
         const tickets = await Ticket.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -29,9 +23,6 @@ const getMyTickets = async (req, res) => {
     }
 };
 
-// @desc    Get all tickets (Admin)
-// @route   GET /api/support
-// @access  Private/Admin
 const getAllTickets = async (req, res) => {
     try {
         const tickets = await Ticket.find({}).populate('user', 'name email').sort({ createdAt: -1 });
@@ -41,9 +32,6 @@ const getAllTickets = async (req, res) => {
     }
 };
 
-// @desc    Update ticket status (Admin)
-// @route   PUT /api/support/:id
-// @access  Private/Admin
 const updateTicketStatus = async (req, res) => {
     const { status } = req.body;
     try {

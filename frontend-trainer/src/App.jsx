@@ -31,6 +31,7 @@ function App() {
             <Route path="clients" element={<Clients />} />
             <Route path="clients/:id/progress" element={<ClientProgress />} />
             <Route path="programs" element={<Programs />} />
+            <Route path="workouts/create" element={<ProgramBuilder />} />
             <Route path="programs/:id" element={<ProgramBuilder />} />
             <Route path="exercises" element={<Exercises />} />
             <Route path="nutrition" element={<Nutrition />} />

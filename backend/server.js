@@ -10,7 +10,6 @@ const initScheduler = require('./utils/scheduler');
 
 connectDB();
 
-// Init Scheduler
 initScheduler();
 
 const app = express();
@@ -46,9 +45,6 @@ io.on("connection", (socket) => {
         });
     });
 
-    // Simpler approach for this project structure:
-    // Join a room based on USER ID.
-    // When sending a message to User X, emit to room "User X ID".
     socket.on('join_room', (userId) => {
         socket.join(userId);
         console.log(`User/Trainer ${userId} joined room: ${userId}`);
@@ -56,9 +52,6 @@ io.on("connection", (socket) => {
 });
 
 app.use('/api/payments', require('./routes/paymentRoutes'));
-
-// For Stripe webhook (optional, but good practice)
-// app.post('/webhook', express.raw({type: 'application/json'}), require('./controllers/paymentController').webhook);
 
 const PORT = process.env.PORT || 5000;
 

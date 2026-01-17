@@ -1,16 +1,82 @@
+import React, { useState, useEffect } from 'react';
+import { UserPlus, Search, MoreVertical, FileText, Activity, UserMinus, Mail, X, TrendingUp } from 'lucide-react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import ExportButton from '../components/ExportButton';
 
 const Clients = () => {
-    // ... existing state ...
+    const [clients, setClients] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newClientEmail, setNewClientEmail] = useState('');
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
+    const navigate = useNavigate();
+
+    const fetchClients = async () => {
+        try {
+            const token = localStorage.getItem('trainerToken');
+            const res = await axios.get('http://localhost:5000/api/trainer/clients', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setClients(res.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching clients:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchClients();
+    }, []);
+
+    const handleAddClient = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
+        try {
+            const token = localStorage.getItem('trainerToken');
+            await axios.post('http://localhost:5000/api/trainer/clients', { email: newClientEmail }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setSuccess('Client added successfully!');
+            setShowAddModal(false);
+            setNewClientEmail('');
+            fetchClients();
+            setTimeout(() => setSuccess(null), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Failed to add client');
+            setTimeout(() => setError(null), 3000);
+        }
+    };
+
+    const handleRemoveClient = async (id) => {
+        if (!window.confirm('Are you sure you want to remove this client?')) return;
+        try {
+            const token = localStorage.getItem('trainerToken');
+            await axios.delete(`http://localhost:5000/api/trainer/clients/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setClients(clients.filter(c => c._id !== id));
+        } catch (error) {
+            console.error(error);
+            alert('Failed to remove client');
+        }
+    };
+
+    const handleAssignPlan = (clientId) => {
+        navigate(`/workouts/create?clientId=${clientId}`);
+    };
 
     const exportColumns = [
         { header: 'Name', key: 'name' },
         { header: 'Email', key: 'email' },
         { header: 'Joined', key: 'createdAt' },
-        { header: 'Status', key: 'status' } // Assuming status exists or we can mock it
+        { header: 'Status', key: 'status' }
     ];
-
-    // ... existing fetchClients ...
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -160,7 +226,7 @@ const Clients = () => {
                 </div>
             )}
 
-            ]            {selectedClient && (
+            {selectedClient && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-surface border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl animate-fade-in-up relative">
                         <button

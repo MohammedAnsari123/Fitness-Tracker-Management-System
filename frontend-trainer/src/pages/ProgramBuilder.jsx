@@ -1,35 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Save, Plus, Trash2, ArrowLeft, Coffee } from 'lucide-react';
 
 const ProgramBuilder = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const clientId = searchParams.get('clientId');
+
     const [program, setProgram] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!!id);
     const [saving, setSaving] = useState(false);
 
     const token = localStorage.getItem('trainerToken');
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
     useEffect(() => {
-        fetchProgram();
+        if (id) {
+            fetchProgram();
+        } else {
+            setProgram({
+                name: 'New Workout Program',
+                weeks: [
+                    {
+                        weekNumber: 1,
+                        days: [
+                            { day: 'Monday', isRestDay: false, exercises: [] },
+                            { day: 'Tuesday', isRestDay: false, exercises: [] },
+                            { day: 'Wednesday', isRestDay: false, exercises: [] },
+                            { day: 'Thursday', isRestDay: false, exercises: [] },
+                            { day: 'Friday', isRestDay: false, exercises: [] },
+                            { day: 'Saturday', isRestDay: true, exercises: [] },
+                            { day: 'Sunday', isRestDay: true, exercises: [] }
+                        ]
+                    }
+                ]
+            });
+        }
     }, [id]);
 
     const fetchProgram = async () => {
         try {
-            // We need a route to get a SINGLE program by ID.
-            // Assuming the backend has getProgramById or we filter from client programs.
-            // Since getProgramById might not exist in trainerRoutes based on previous check,
-            // we might need to add it or use a workaround.
-            // Let's check if we can GET /api/trainer/programs/detail/:id?
-            // If not, we might need to rely on the user passing data or add the route.
-            // For now, let's assume we need to add a specific route or fetch all and find.
-            // But wait, the previous `getClientPrograms` takes clientId.
-            // We only have programId here.
-
-            // NOTE: I am adding a new route to backend for this: GET /api/trainer/program/:id
             const res = await axios.get(`http://localhost:5000/api/trainer/program/${id}`, config);
             setProgram(res.data);
             setLoading(false);
@@ -42,8 +54,22 @@ const ProgramBuilder = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await axios.put(`http://localhost:5000/api/trainer/program/${id}`, program, config);
-            alert('Program saved successfully!');
+            if (id) {
+                await axios.put(`http://localhost:5000/api/trainer/program/${id}`, program, config);
+                alert('Program updated successfully!');
+            } else {
+                if (!clientId) {
+                    alert('Error: No client selected for this program.');
+                    setSaving(false);
+                    return;
+                }
+                await axios.post('http://localhost:5000/api/trainer/programs', {
+                    ...program,
+                    clientId: clientId
+                }, config);
+                alert('Program created and assigned successfully!');
+                navigate('/clients');
+            }
             setSaving(false);
         } catch (error) {
             console.error(error);
@@ -55,10 +81,6 @@ const ProgramBuilder = () => {
     const toggleRestDay = (weekIndex, dayIndex) => {
         const newProgram = { ...program };
         newProgram.weeks[weekIndex].days[dayIndex].isRestDay = !newProgram.weeks[weekIndex].days[dayIndex].isRestDay;
-
-        // If becoming a rest day, maybe clear exercises?
-        // Optional: if (newProgram.weeks[weekIndex].days[dayIndex].isRestDay) newProgram.weeks[weekIndex].days[dayIndex].exercises = [];
-
         setProgram(newProgram);
     };
 
@@ -83,12 +105,7 @@ const ProgramBuilder = () => {
     };
 
     const initializeDays = () => {
-        // Helper to ensure structure exists if empty
         if (!program || !program.weeks) return;
-
-        // Logic to populate weeks/days if they are empty arrays
-        // Use with caution, might overwrite. 
-        // Better to handle in the render or initial load.
     };
 
     if (loading) return <div className="text-white p-10">Loading program...</div>;

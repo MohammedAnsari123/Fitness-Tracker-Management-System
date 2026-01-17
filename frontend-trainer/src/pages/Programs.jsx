@@ -98,7 +98,6 @@ const Programs = () => {
                 </button>
             </header>
 
-            {/* Client Selector & Program List */}
             <div className="space-y-6">
                 <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                     <label className="block text-sm font-medium text-slate-300 mb-2">Select Client to View Programs</label>
